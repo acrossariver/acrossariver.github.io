@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Across a River</title><link href="/" rel="alternate"></link><link href="/feeds/all.atom.xml" rel="self"></link><id>/</id><updated>2020-06-29T00:00:00+09:00</updated><entry><title>２０２０年５月のSくん</title><link href="/H002.html" rel="alternate"></link><published>2020-06-29T00:00:00+09:00</published><updated>2020-06-29T00:00:00+09:00</updated><author><name>aar0429</name></author><id>tag:None,2020-06-29:/H002.html</id><content type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Across a River</title><link href="/" rel="alternate"></link><link href="/feeds/all.atom.xml" rel="self"></link><id>/</id><updated>2020-06-29T00:00:00+09:00</updated><entry><title>筆算プリント作成</title><link href="/H001.html" rel="alternate"></link><published>2020-06-29T00:00:00+09:00</published><updated>2020-06-29T00:00:00+09:00</updated><author><name>aar0429</name></author><id>tag:None,2020-06-29:/H001.html</id><content type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="ja"&gt;
 &lt;!--&lt;head&gt;--&gt;
 
@@ -10,12 +10,18 @@
 &lt;meta name="keywords" content="ひっさん,筆算,割り算,プリント,印刷,問題,作成,無料" /&gt;
 &lt;meta name="description" content="算数の筆算（ひっさん）の練習問題プリントと答えを自動で作成するページです。そのまま印刷して利用できます。自動作成なので作成ボタンをおすたびに新しい問題ができます。割り算の問題も作成できます。無料で利用できます。" /&gt;&lt;/p&gt;
 &lt;p&gt;&lt;title&gt;筆算（ひっさん）プリントの自動作成２　算数の問題と答えの印刷&lt;/title&gt;&lt;/p&gt;
-&lt;p&gt;&lt;link rel="stylesheet" type="text/css" href="./css/style.css" /&gt;
+&lt;!--&lt;link rel="stylesheet" type="text/css" href="./css/style.css" /&gt; --&gt;
+
 &lt;script language="JavaScript" src="./js/commonPrint.js"&gt;&lt;/script&gt;
+
 &lt;script language="JavaScript" src="./js/keisan.js"&gt;&lt;/script&gt;
+
 &lt;script language="JavaScript" src="./js/drillPrintHissanYoko1.js"&gt;&lt;/script&gt;
+
 &lt;script type="text/javascript" src="./js/googleanalytics.js"&gt;&lt;/script&gt;
-&lt;script type="text/javascript" src="//code.jquery.com/jquery-1.6.2.min.js"&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;script type="text/javascript" src="//code.jquery.com/jquery-1.6.2.min.js"&gt;&lt;/script&gt;
+
 &lt;p&gt;&lt;/head&gt;&lt;/p&gt;
 &lt;p&gt;&lt;body onLoad="F_Initialize()"&gt;&lt;/p&gt;
 &lt;p&gt;&lt;span class="normal1"&gt;&lt;/p&gt;
