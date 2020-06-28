@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Across a River - Elementary</title><link href="/" rel="alternate"></link><link href="/feeds/elementary.atom.xml" rel="self"></link><id>/</id><updated>2020-06-06T00:00:00+09:00</updated><entry><title>図画工作 小学校学習指導要領（平成２９年告示） 穴埋め問題</title><link href="/E006.html" rel="alternate"></link><published>2020-06-06T00:00:00+09:00</published><updated>2020-06-06T00:00:00+09:00</updated><author><name>aar0429</name></author><id>tag:None,2020-06-06:/E006.html</id><summary type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Across a River - Elementary</title><link href="/" rel="alternate"></link><link href="/feeds/elementary.atom.xml" rel="self"></link><id>/</id><updated>2020-06-29T00:00:00+09:00</updated><entry><title>体育 小学校学習指導要領（平成２９年告示） 穴埋め問題</title><link href="/E006.html" rel="alternate"></link><published>2020-06-29T00:00:00+09:00</published><updated>2020-06-29T00:00:00+09:00</updated><author><name>aar0429</name></author><id>tag:None,2020-06-29:/E006.html</id><summary type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
 &lt;html lang="ja"&gt;
 &lt;!--&lt;head&gt;--&gt;
 &lt;meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS"&gt;
 &lt;!----&gt;
-&lt;title&gt;図画工作 学習指導要領（平成２９年告示） 穴埋め問題&lt;/title&gt;
+&lt;title&gt;体育 学習指導要領（平成２９年告示） 穴埋め問題&lt;/title&gt;
 &lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
 &lt;meta http-equiv="Content-Script-Type" content="text/javascript"&gt;
 &lt;style type="text/css"&gt;
@@ -21,7 +21,949 @@ hr      { color:lavender; height:5px; }
 &lt;!--&lt;head&gt;--&gt;
 &lt;meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS"&gt;
 &lt;!----&gt;
-&lt;title&gt;図画工作 学習指導要領（平成２９年告示） 穴埋め問題&lt;/title&gt;
+&lt;title&gt;体育 学習指導要領（平成２９年告示） 穴埋め問題&lt;/title&gt;
+&lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
+&lt;meta http-equiv="Content-Script-Type" content="text/javascript"&gt;
+&lt;style type="text/css"&gt;
+&lt;!--
+body  { background-color:white; color:black}
+table,td,th { font-size:16px; }
+input { font-size:16px; font-family:monospace; vertical-align:middle;}
+input.qn { font-size:12px; font-family:monospace; vertical-align:middle; }
+input.bt { font-size:14px; vertical-align:middle; }
+select  { font-size:16px; font-family:monospace; vertical-align:middle;}
+hr      { color:lavender; height:5px; }
+.honbun { width:600; font-size:16px; }
+.mondai { width:600; font-size:16px; background-color:; padding:5px; font-family:monospace; }
+h3.ptitle { font-size:150%; font-weight:bold;} 
+.qtop   { font-weight:bold;} 
+.webquiz { font-size:9pt; }
+--&gt;
+&lt;/style&gt;
+
+&lt;script type="text/javascript" language="JavaScript"&gt;
+&lt;!--
+gyoshori = "br";    // 行処理 normal , bunkatu:行分割, br:改行タグ付加, thru:無処理
+shuffle = false;        // 行分割したとき各問いをランダムに入れ替える
+qn_string = "123";  // 問題番号の文字
+bt_func = "seigo";  // 番号ボタンのふるまい
+box_size = "";      // 解答欄のサイズ
+ssort = true;       // 選択肢を昇順に並べかえる
+kaito_ctrl = true;  // 解答ボタンの制限
+hint_btn = false;   // ヒントボタンの有無
+shikii = 50;        // 解答を得るための敷居値
+tag_conv = false;
+bgc1 = "lightcyan";
+bgc2 = "white";
+txtc1 = "black";
+txtc2 = "black";
+pre1 = "";
+pre2 = "";
+Win0opened = false;
+
+a = new Array();
+qn = new Array();
+ptitle = "";
+mondai_top = "以下の文中の空欄を適当な語句でうめて完成させなさい。";
+
+// 問題文 qdata
+var qdata = "　&lt;h2&gt;第１　目標&lt;/h2&gt;\n\n　表現及び鑑賞の活動を通して，｛造形的｝な見方 ";
+// === end of qdata
+
+// ヒント hint
+var hintdata = "";
+// === end of hintdata
+
+h = new Array();
+if (hint_btn || bt_func =="hint") h = makehint(hintdata);
+
+separator = new Array("｛","｝","｜");
+tag0 = new Array("&lt;","&gt;");
+tag1 = new Array("&amp;lt;","&amp;gt;");
+
+if (gyoshori=="normal" || gyoshori=="bunkatu") question = rowsplit(qdata);
+if (gyoshori=="br") question = plusbr(qdata);
+if (gyoshori=="thru") question = qdata;
+
+// 問題番号文字列をセット NUM:空欄の数 文字不足時は数字にセット
+var x=0, NUM=0, qnlen;
+while(x&gt;=0){
+  x=question.indexOf(separator[0],x);
+  if (x==-1) break;
+  x++; NUM++;
+}
+qnlen = qn_string.length;
+var qns = qn_string.substring(0,1), qnn;
+if (qns=="1" || qns=="a" || qns=="A") qnn=1; else qnn="あ".length;
+for(i=1;i&lt;=qnlen;i++) { qn[i]=qn_string.substring((i-1)*qnn,i*qnn);}
+if (qnlen&lt;NUM) for(i=1;i&lt;=NUM;i++) { qn[i]=i; }
+
+s = new Array();
+for (i=0;i&lt;=NUM;i++) s[i] = new Array();  // select form value 配列
+
+// 問題文中から穴埋め箇所と解答を抽出し，Form TAG に置き換え
+var x0=0, x1=0, x2=0, i=1, ql, str="", bx_size;
+while(x1&gt;=0){
+  ql=question.length;
+  x1 = question.indexOf(separator[0],x0);
+  if (x1==-1) break;
+  x2 = question.indexOf(separator[1],x0);
+  a[i] = question.substring(x1+separator[0].length, x2);
+  if (tag_conv) a[i]=tagrev(a[i]);
+  str = question.substring(0,x1);
+  if (a[i].indexOf(separator[2],0)==-1){
+    if (box_size=="") bx_size=jstrlen(a[i]); else bx_size=box_size;
+    str += "&lt;input name=q" + i + " size=" + bx_size + "&gt;";
+  } else {
+    str += fselect(a[i],i);
+  }
+  if (bt_func != "nodisp") str += "&lt;input type=button value='" + qn[i] + "' class=qn";
+  if (bt_func == "seigo") str += " onClick='hantei(" + i + ")'&gt;";
+  if (bt_func == "hint") str += " onClick='alert(\"" + h[i] + "\")'&gt;";
+  if (bt_func == "none") str += "&gt;";
+  x0 = str.length;
+  question = str + question.substring(x2+separator[1].length,ql);
+  i++;
+}
+
+var str_body = "&lt;div class=honbun&gt;&lt;form name=f&gt;";
+str_body += "&lt;h3 class=ptitle&gt;" + ptitle + "&lt;\/h3&gt;";
+str_body += "&lt;b class=qtop&gt;" + mondai_top + "&lt;\/b&gt;";
+str_body += "&lt;hr width=600&gt;&lt;div class=mondai&gt;" + question + "&lt;\/div&gt;&lt;hr width=600&gt;";
+str_body += "&lt;table width=600&gt;&lt;tr&gt;&lt;td&gt;";
+str_body += "&lt;div align=center&gt;&lt;input type=button value='採点' onClick='saiten();' class=bt&gt;　&lt;input type=reset value='リセット' class=bt&gt;";
+str_body += "　&lt;input type=button value='解答' onClick='kaito();' class=bt&gt;";
+if (hint_btn) str_body += "　&lt;input type=button value='ヒント' onClick='hintdisp();' class=bt&gt;";
+
+str_body += "&lt;\/td&gt;&lt;\/tr&gt;&lt;\/table&gt;&lt;\/form&gt;&lt;\/div&gt;";
+
+
+// ------------ サブルーチン -------------
+
+// ヒント配列 h[] の作成
+function makehint(data) {
+  str = data.split("\n");
+  h = new Array();
+  j=1;
+  for (i in str){
+    if (str[i] != "") {
+      h[j] = str[i];
+      j++;
+    }
+  }
+  return h; 
+}
+
+// データを空行で分割
+function qconv(data){
+  str = data.split("\n");
+  var j=1;
+  q[j]="";
+  for (i in str) {
+    if (str[i] != "") {
+       q[j] += str[i] + "&lt;br&gt;";
+    } else if (i&gt;0) {
+       if (str[i-1] != "") j++;
+       q[j]="";
+    }
+  }
+  return j-1;
+}
+
+// データを行単位で分割
+function qconv2(data){
+  str = data.split("\n");
+  j=1;
+  for (i in str) {
+    if (str[i] != "") { q[j]=str[i]; j++; }
+  }
+  return j-1;
+}
+
+// データを行, 空行で分割し，行末に改行タグを挿入。shuffleの場合はランダム化
+function rowsplit(data){
+  str = data.split("\n");
+  q = new Array();
+  x = new Array();
+  hintm = new Array();
+
+  if (gyoshori=="normal") j = qconv(data);
+  if (gyoshori=="bunkatu") j = qconv2(data);
+
+  // ヒントを２次元配列 hintm[][] に格納
+  for (i=0;i&lt;=j;i++) hintm[i] = new Array();
+  var xx=0, m=0, n;  // m:何問目
+  for (i=1;i&lt;=j;i++){
+     xx=0; n=0;
+     while(xx&gt;=0){
+       xx=q[i].indexOf(separator[0],xx);
+       if (xx==-1) break;
+       xx++; m++; n++;
+       hintm[i][n] = h[m];  // i問目のn番目のヒント
+     }
+  }
+
+  x = ransu(j);
+  var ss = "&lt;table width=600 border=0 cellpadding=5 cellspacing=0&gt;";
+  m=0;
+  for (i=1;i&lt;=j;i++){
+    if (shuffle) {
+        k=x[i];
+        // ヒント配列組み直し
+        xx=0; n=0;
+        while(xx&gt;=0){
+          xx=q[k].indexOf(separator[0],xx);
+          if (xx==-1) break;
+          xx++; m++; n++;
+          h[m] = hintm[k][n];  // k問目のn番目のヒント
+        }
+    } else k=i;
+    if (i % 2 == 1) { bgc=bgc1; txtc=txtc1;} else { bgc=bgc2; txtc=txtc2; }
+    ss += "&lt;tr&gt;&lt;td bgcolor=" + bgc + " valign=top width=36&gt;";
+    ss += "&lt;table border=2 cellspacing=0&gt;&lt;tr&gt;&lt;th width=24 height=24 bgcolor=pink&gt;&lt;font color=black&gt;" + i + "&lt;\/font&gt;&lt;\/th&gt;&lt;\/tr&gt;&lt;\/table&gt;&lt;\/td&gt;";
+    ss += "&lt;td bgcolor=" + bgc + " width=564&gt;&lt;font color=" + txtc + "&gt;"+ pre1 + q[k] + pre2 + "&lt;\/font&gt;&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  ss += "&lt;\/table&gt;";
+  return ss;
+}
+
+// データはそのままに，各行の最後に &lt;br&gt;を挿入
+function plusbr(data){
+  str = data.split("\n");
+  var ss="";
+  for (i in str) ss += str[i] + "&lt;br&gt;";
+  return ss;
+}
+
+// 文字列からセパレータ｜を探し，選択肢を抽出。select form 作成
+function fselect(str,n) {
+  var x=0, i=1, j, data;
+  var xr = new Array();
+  var w = new Array();
+  s[n][0]=""; w[0]="";
+  while(x&gt;=0){
+    alen = str.length;
+    x = str.indexOf(separator[2],0);
+    if (x==-1) break;
+    w[i]=str.substring(0,x);
+    str = str.substring(x+separator[2].length,alen);
+    i++;
+  }
+  w[i]=str;
+  a[n]=w[1];  // 正解を a[n] にセット
+  data = "&lt;select name=q"  + n + "&gt;&lt;option value=''&gt; ";
+  if (ssort)  w.sort(); else xr = ransu(i);
+  for (j=1;j&lt;=i;j++){
+    if (ssort) k = j; else k = xr[j];
+    data += "&lt;option value='" + w[k] + "'&gt;" + w[k];
+    s[n][j]=w[k];
+  }
+  data += "&lt;\/select&gt;";
+  return data;
+}
+
+// n までの整数をランダムに発生  戻り値 x[]
+function ransu(n) {
+  var k=1, l,  bingo;
+  var x=new Array();
+  x[k] = Math.floor(n * Math.random())+1;
+  k++;
+  while ( k&lt;=n ) {
+    x[k] = Math.floor(n * Math.random())+1;
+    bingo = 0;
+    for (l=1; l&lt;k; l++) {  // すでに同じ数字がないかチェック
+       if ( x[k] == x[l] ) { bingo=1; break; }
+    }
+    if (bingo==0) k++;     // 同じ数字がなければ k++
+  }
+  return x;
+}
+
+// 文字列の長さを返す（日本語を２としてカウント）
+function jstrlen(str) {
+  var len = 0, i;
+  str = escape(str);
+  for (i=0;i&lt;str.length;i++,len++) {
+    if (str.charAt(i) == "%") {
+      if (str.charAt(++i) == "u") {
+        i += 3;
+        len++;
+      }
+      i++;
+    }
+  }
+  return len;
+}
+
+// タグ文字変換 &lt;&gt; → &amp;lt; &amp;gt;
+function tagconv(s){
+  var i, x;
+  for(i in tag0){
+    x = s.indexOf(tag0[i],0);
+    while(x&gt;-1){
+      s = s.substring(0,x) + tag1[i] + s.substring(x+tag0[i].length,s.length);
+      x = s.indexOf(tag0[i],0);
+    }
+  }
+  return s;
+}
+
+// タグ文字変換 &amp;lt; &amp;gt; → &lt;&gt;
+function tagrev(s){
+  var i, x;
+  for(i in tag1){
+    x = s.indexOf(tag1[i],0);
+    while(x&gt;-1){
+      s = s.substring(0,x) + tag0[i] + s.substring(x+tag1[i].length,s.length);
+      x = s.indexOf(tag1[i],0);
+    }
+  }
+  return s;
+}
+
+// 正誤判定ボタンを押した時の処理
+function hantei(m) {
+  var answer="";
+  if (document.f.elements[(m-1)*2].type == "text") { 
+    answer = document.f.elements[(m-1)*2].value;
+  } else {
+    answer = s[m][document.f.elements[(m-1)*2].selectedIndex];
+  }
+  if (answer==a[m]) alert("○ 正解！"); else alert("× 違うよ！");
+}
+
+// 採点し，score を返す
+function scorecheck(){
+  var tmp, data="", seikai=0, mm;
+  answer = new Array();
+  maru = new Array();
+  if (bt_func == "nodisp") mm=1; else mm=2;
+  // 正解数をカウントし，○×判定 maru[]
+  for (i=1;i&lt;=NUM;i++) {
+    if (document.f.elements[(i-1)*mm].type=="text") {
+        answer[i] = document.f.elements[(i-1)*mm].value;
+    } else {
+      answer[i] = s[i][document.f.elements[(i-1)*mm].selectedIndex];
+    }
+    if (answer[i] == a[i]) {
+       maru[i] = true;
+       seikai += 1;
+    } else { maru[i]=false; }
+  }
+  score = Math.floor(100*seikai/NUM + 0.5);
+  return score;
+}
+
+// 採点ボタンを押したときの処理
+function saiten(){
+  score = scorecheck();
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;採点結果&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=pink&gt;&lt;center&gt;";
+  data += "&lt;h3&gt;結　果&lt;\/h3&gt;&lt;form&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt;問&lt;\/th&gt;&lt;th width=120&gt;あなたの解答&lt;\/th&gt;&lt;th&gt;正誤&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;&lt;td nowrap&gt;　" + tagconv(answer[i]) + "&lt;\/td&gt;&lt;th&gt;";
+    data += "&lt;font ";
+    if (maru[i]) data += "color=blue&gt;○"; else data += "color=red&gt;×";
+    data += "&lt;\/font&gt;&lt;\/th&gt;";
+    data += "&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;";
+  data += "&lt;font color=red&gt;&lt;u&gt;&lt;font size=7&gt;" + score + "&lt;\/font&gt;&lt;\/u&gt;&lt;font size=6&gt; 点&lt;\/font&gt;&lt;\/font&gt;&lt;br&gt;";
+  if (!kaito_ctrl &amp;&amp; score &lt; shikii) data += "&lt;small&gt;" + shikii + "点以上で解答が見られます&lt;\/small&gt;&lt;br&gt;";
+  data += "&lt;br&gt;&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+  Win0opened = true;
+  wh = 25*NUM + 230;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=350,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+
+// 解答ボタンを押したときの処理
+function kaito(){
+  var tmpk=null, chk="", data="", c;
+  // 解答しているかどうかチェック
+  if (bt_func == "nodisp") mm=1; else mm=2;
+  for (i=1;i&lt;=NUM;i++) { 
+    tmpk = document.f.elements[(i-1)*mm].value;
+    if (document.f.elements[(i-1)*mm].type=="text") chk += tmpk; else 
+       chk += s[i][document.f.elements[(i-1)*mm].selectedIndex];
+  }
+  if ( chk == "" ) { alert("ちゃんと答えてからね！"); return; }
+  score = scorecheck();
+  if (!kaito_ctrl &amp;&amp; score &lt; shikii) { alert(shikii + "点以上取らないとダメです"); return; }
+
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;解答&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=lavender&gt;&lt;center&gt;";
+  data += "&lt;h3&gt;解答&lt;\/h3&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt; 問 &lt;\/th&gt;&lt;th width=150&gt;解答&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;";
+    if (maru[i]) c="black"; else c="red";
+    data += "&lt;td align=center&gt;&lt;font color=" + c + "&gt;" + tagconv(a[i]) + "&lt;\/font&gt;&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;&lt;br&gt;&lt;form&gt;";
+  data += "&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+
+  Win0opened = true;
+  wh = 25*NUM + 160;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=300,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+// ヒント一覧
+function hintdisp (){
+  var data="";
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;解答&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=lavender&gt;&lt;center&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt; 問 &lt;\/th&gt;&lt;th width=150&gt;ヒント&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;";
+    data += "&lt;td&gt;" + h[i] + "&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;&lt;br&gt;&lt;form&gt;";
+  data += "&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+
+  Win0opened = true;
+  wh = 25*NUM + 140;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=300,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+// Unload したとき
+function winclose(){
+  if (Win0opened &amp;&amp; !Win0.closed) Win0.close();
+}
+
+// --&gt;
+&lt;/script&gt;
+
+&lt;!--&lt;/head&gt;--&gt;
+
+&lt;!--================ 本文はここから ====================--&gt;
+
+&lt;p&gt;&lt;body bgcolor=white text=black onUnload="winclose()"&gt;
+&lt;noscript&gt;
+この WEB問題（穴埋め問題）は JavaScript 1.1で書かれています。&lt;br&gt;
+Netscape Navigator 3.0 以上 または Internet Explorer 4.0 以上でご覧下さい。&lt;br&gt;
+WEB問題作成ツール http://www.fureai.or.jp/~irie/webquiz/ &lt;br&gt;
+&lt;/noscript&gt;&lt;/p&gt;
+&lt;script type="text/javascript" language="JavaScript"&gt;
+&lt;!--
+  document.write(str_body); 
+// --&gt;
+&lt;/script&gt;
+
+&lt;p&gt;&lt;/body&gt;
+&lt;/html&gt;&lt;/p&gt;</content><category term="Elementary"></category><category term="学習指導要領"></category><category term="穴埋め問題"></category></entry><entry><title>外国語 小学校学習指導要領（平成２９年告示） 穴埋め問題</title><link href="/E004.html" rel="alternate"></link><published>2020-06-01T00:00:00+09:00</published><updated>2020-06-01T00:00:00+09:00</updated><author><name>aar0429</name></author><id>tag:None,2020-06-01:/E004.html</id><summary type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="ja"&gt;
+&lt;!--&lt;head&gt;--&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS"&gt;
+&lt;!----&gt;
+&lt;title&gt;外国語 小学校学習指導要領（平成２９年告示） 穴埋め問題&lt;/title&gt;
+&lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
+&lt;meta http-equiv="Content-Script-Type" content="text/javascript"&gt;
+&lt;style type="text/css"&gt;
+&lt;!--
+body  { background-color:white; color:black}
+table,td,th { font-size:16px; }
+input { font-size:16px; font-family:monospace; vertical-align:middle;}
+input.qn { font-size:12px; font-family:monospace; vertical-align:middle; }
+input.bt { font-size:14px; vertical-align:middle; }
+select  { font-size:16px; font-family:monospace; vertical-align:middle;}
+hr      { color:lavender; height:5px; }
+.honbun { width:600 …&lt;/style&gt;&lt;/meta&gt;&lt;/meta&gt;&lt;/meta&gt;&lt;/html&gt;</summary><content type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="ja"&gt;
+&lt;!--&lt;head&gt;--&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS"&gt;
+&lt;!----&gt;
+&lt;title&gt;外国語 小学校学習指導要領（平成２９年告示） 穴埋め問題&lt;/title&gt;
+&lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
+&lt;meta http-equiv="Content-Script-Type" content="text/javascript"&gt;
+&lt;style type="text/css"&gt;
+&lt;!--
+body  { background-color:white; color:black}
+table,td,th { font-size:16px; }
+input { font-size:16px; font-family:monospace; vertical-align:middle;}
+input.qn { font-size:12px; font-family:monospace; vertical-align:middle; }
+input.bt { font-size:14px; vertical-align:middle; }
+select  { font-size:16px; font-family:monospace; vertical-align:middle;}
+hr      { color:lavender; height:5px; }
+.honbun { width:600; font-size:16px; }
+.mondai { width:600; font-size:16px; background-color:; padding:5px; font-family:monospace; }
+h3.ptitle { font-size:150%; font-weight:bold;} 
+.qtop   { font-weight:bold;} 
+.webquiz { font-size:9pt; }
+--&gt;
+&lt;/style&gt;
+
+&lt;script type="text/javascript" language="JavaScript"&gt;
+&lt;!--
+gyoshori = "br";    // 行処理 normal , bunkatu:行分割, br:改行タグ付加, thru:無処理
+shuffle = false;        // 行分割したとき各問いをランダムに入れ替える
+qn_string = "123";  // 問題番号の文字
+bt_func = "seigo";  // 番号ボタンのふるまい
+box_size = "";      // 解答欄のサイズ
+ssort = true;       // 選択肢を昇順に並べかえる
+kaito_ctrl = true;  // 解答ボタンの制限
+hint_btn = false;   // ヒントボタンの有無
+shikii = 50;        // 解答を得るための敷居値
+tag_conv = false;
+bgc1 = "lightcyan";
+bgc2 = "white";
+txtc1 = "black";
+txtc2 = "black";
+pre1 = "";
+pre2 = "";
+Win0opened = false;
+
+a = new Array();
+qn = new Array();
+ptitle = "";
+mondai_top = "以下の文中の空欄を適当な語句でうめて完成させなさい。";
+
+// 問題文 qdata
+var qdata = "  &lt;h2&gt;第１　目標&lt;/h2&gt;\n\n　外国語によるコミュニケーションにおける見方・考え方を働かせ，外国語による聞くこと，読むこと，話すこと，書くことの言語活動を通して，｛コミュニケーション｝を図る基礎となる資質・能力を次のとおり育成することを目指す。\n\n　(1) 外国語の音声や文字，｛語彙｝，表現，｛文構造｝，言語の働きなどについて，｛日本語｝と外国語との違いに気付き，これらの知識を理解するとともに，読むこと，書くことに慣れ親しみ，聞くこと，読むこと，話すこと，書くことによる実際のコミュニケーションにおいて活用できる基礎的な技能を身に付けるようにする。\n\n　(2) コミュニケーションを行う目的や場面，状況などに応じて，｛身近で簡単｝な事柄について，聞いたり話したりするとともに，音声で十分に慣れ親しんだ外国語の｛語彙｝や基本的な｛表現｝を推測しながら読んだり，｛語順｝を意識しながら書いたりして，自分の｛考え｝や気持ちなどを伝え合うことができる基礎的な力を養う。\n\n　(3) 外国語の背景にある｛文化｝に対する理解を深め，他者に配慮しながら，｛主体｝的に外国語を用いてコミュニケーションを図ろうとする態度を養う。\n\n&lt;h2&gt;第2　各言語の目標及び内容等&lt;/h2&gt;\n\n&lt;h4&gt;英語&lt;/h4&gt;\n\n&lt;em&gt;１　目標&lt;/em&gt;\n\n　英語学習の特質を踏まえ，以下に示す，聞くこと，読むこと，話すこと［やり取り］，話すこと［｛発表｝］，書くことの五つの領域別に設定する目標の実現を目指した指導を通して，第１の(1)及び(2)に示す資質・能力を｛一体的｝に育成するとともに，その過程を通して，第１の(3)に示す資質・能力を育成する。\n\n　(1) 聞くこと\n\n　　ア  ｛ゆっくりはっきり｝と話されれば，自分のことや身近で簡単な事柄について，簡単な語句や基本的な表現を聞き取ることができるようにする。\n\n　　イ  ゆっくりはっきりと話されれば，日常生活に関する身近で簡単な事柄について，｛具体的｝な情報を聞き取ることができるようにする。\n\n　　ウ  ゆっくりはっきりと話されれば，日常生活に関する身近で簡単な事柄について，｛短い話｝の概要を捉えることができるようにする。\n\n　(2) 読むこと\n\n　　ア  ｛活字体｝で書かれた文字を識別し，その読み方を発音することができるようにする。\n\n　　イ  音声で十分に慣れ親しんだ簡単な語句や基本的な表現の意味が分かるようにする。\n\n　(3) 話すこと［やり取り］\n\n　　ア  基本的な表現を用いて指示，｛依頼｝をしたり，それらに応じたりすることができるようにする。\n\n　　イ  日常生活に関する身近で簡単な事柄について，自分の｛考え｝や｛気持ち｝などを，簡単な語句や基本的な表現を用いて伝え合うことができるようにする。\n\n　　ウ  自分や相手のこと及び｛身の回りの物｝に関する事柄について，簡単な語句や基本的な表現を用いてその場で質問をしたり質問に答えたりして，｛伝え合う｝ことができるようにする。\n\n　(4) 話すこと［発表］\n\n　　ア  ｛日常生活｝に関する身近で簡単な事柄について，簡単な語句や基本的な表現を用いて話すことができるようにする。\n\n　　イ  ｛自分｝のことについて，伝えようとする内容を整理した上で，簡単な語句や基本的な表現を用いて話すことができるようにする。\n\n　　ウ  身近で簡単な事柄について，伝えようとする内容を｛整理｝した上で，自分の考えや気持ちなどを，簡単な語句や基本的な表現を用いて話すことができるようにする。\n\n　(5) 書くこと\n\n　　ア  ｛大文字｝，｛小文字｝を活字体で書くことができるようにする。また，語順を意識しながら｛音声｝で十分に慣れ親しんだ簡単な語句や基本的な表現を書き写すことができるようにする。\n\n　　イ  自分のことや身近で簡単な事柄について，｛例文｝を参考に，音声で十分に慣れ親しんだ簡単な語句や基本的な表現を用いて書くことができるようにする。\n\n&lt;em&gt;２ 内 容&lt;/em&gt;\n\n&lt;h4&gt;第５学年及び第６学年&lt;/h4&gt;\n\n&lt;h5&gt;〔知識及び技能〕&lt;/h5&gt;\n\n　(1) 英語の特徴やきまりに関する事項\n\n　実際に英語を用いた言語活動を通して，次に示す言語材料のうち，１に示す五つの領域別の目標を達成するのにふさわしいものについて理解するとともに，｛言語材料｝と言語活動とを効果的に関連付け，実際のコミュニケーションにおいて活用できる技能を身に付けることができるよう指導する。\n\n　ア 音声 次に示す事項のうち基本的な語や句，文について取り扱うこと。\n\n　　（ア） 現代の標準的な｛発音｝\n\n　　（イ） 語と語の連結による｛音｝の変化\n\n　　（ウ） 語や句，文における基本的な｛強勢｝\n\n　　（エ） 文における基本的な｛イントネーション｝\n\n　　（オ） 文における基本的な｛区切り｝\n\n　イ 文字及び｛符号｝\n\n　　（ア） 活字体の大文字，小文字\n\n　　（イ） ｛終止符｝や疑問符，コンマなどの基本的な符号\n\n　ウ 語，｛連語｝及び慣用表現\n\n　　（ア） １に示す五つの領域別の目標を達成するために必要となる，第３学年及び第４学年において第４章外国語活動を履修する際に取り扱った語を含む ｛600｝ 〜 ｛700｝ 語程度の語\n\n　　（イ） 連語のうち，｛get up｝，look at などの活用頻度の高い基本的なもの\n\n　　（ウ） 慣用表現のうち，｛excuse me｝，｛I see｝，I'm sorry，thank you，you're welcome などの活用頻度の高い基本的なもの\n\n　エ 文及び文構造 次に示す事項について，日本語と英語の語順の違い等に気付かせるとともに，基本的な表現として，意味のある｛文脈｝でのコミュニケーションの中で繰り返し触れることを通して活用すること。\n\n　（ア） 文\n\n　　a  単文\n\n　　b  肯定，否定の｛平叙文｝\n\n　　c  肯定，否定の命令文\n\n　　d  疑問文のうち，｛be 動詞｝で始まるものや助動詞（can，do など）で始まるもの，疑問詞（who，what，when，where，why，how）で始まるもの\n\n　　e  代名詞のうち，I，you，he，she などの基本的なものを含むもの\n\n　　f  ｛動名詞｝や過去形のうち，活用頻度の高い基本的なものを含むもの\n\n　（イ） 文構造\n\n　　a  ［主語＋｛動詞｝］\n\n　　b  ［主語＋動詞＋｛補語｝］のうち，\n\n              名詞 主語＋ be 動詞＋ ｛代名詞｝              形容詞\n\n　　c  ［主語＋動詞＋｛目的語｝］のうち，名詞 主語＋動詞＋ ｛動名詞｝〔思考力，判断力，表現力等〕\n\n　(2) 情報を整理しながら考えなどを形成し，英語で表現したり，伝え合ったりすることに関する事項 具体的な課題等を設定し，コミュニケーションを行う目的や場面，状況などに応じて，情報を整理しながら考えなどを形成し，これらを表現することを通して，次の事項を身に付けることができるよう指導する。\n\n　　ア 身近で簡単な事柄について，伝えようとする内容を整理した上で，簡単な語句や基本的な表現を用いて，自分の考えや気持ちなどを伝え合うこと。\n\n　　イ 身近で簡単な事柄について，音声で十分に慣れ親しんだ簡単な語句や基本的な表現を｛推測｝しながら読んだり，語順を意識しながら書いたりすること。\n\n　(3) 言語活動及び言語の働きに関する事項\n\n① 言語活動に関する事項 \n\n　(2)に示す事項については，(1)に示す事項を活用して，例えば，次のような言語活動を通して指導する。\n\n　ア 聞くこと\n\n　　（ア） 自分のことや｛学校生活｝など，身近で簡単な事柄について，簡単な語句や基本的な表現を聞いて，それらを表す｛イラスト｝や写真などと結び付ける活動。\n\n　　（イ） 日付や時刻，｛値段｝などを表す表現など，日常生活に関する身近で簡単な事柄について，具体的な情報を聞き取る活動。\n\n　　（ウ） ｛友達｝や家族，学校生活など，身近で簡単な事柄について，簡単な語句や基本的な表現で話される短い会話や｛説明｝を，イラストや写真などを参考にしながら聞いて，必要な｛情報｝を得る活動。\n\n　イ 読むこと\n\n　　（ア） 活字体で書かれた文字を見て，どの文字であるかやその文字が大文字であるか小文字であるかを識別する活動。\n\n　　（イ） 活字体で書かれた文字を見て，その｛読み方｝を適切に発音する活動。\n\n　　（ウ） 日常生活に関する身近で簡単な事柄を内容とする掲示や｛パンフレット｝などから，自分が必要とする情報を得る活動。\n\n　　（エ） ｛音声｝で十分に慣れ親しんだ簡単な語句や基本的な表現を，｛絵本｝などの中から識別する活動。\n\n　ウ 話すこと［やり取り]\n\n　　（ア） 初対面の人や知り合いと｛挨拶｝を交わしたり，相手に｛指示｝や依頼をして，それらに応じたり断ったりする活動。\n\n　　（イ） 日常生活に関する身近で簡単な事柄について，自分の考えや気持ちなどを伝えたり，簡単な質問をしたり質問に答えたりして伝え合う活動。\n\n　　（ウ） 自分に関する簡単な質問に対してその場で答えたり，｛相手｝に関する簡単な質問をその場でしたりして，短い｛会話｝をする活動。\n\n　エ 話すこと［発表]\n\n　　（ア） 時刻や日時，｛場所｝など，日常生活に関する身近で簡単な事柄を話す活動。\n\n　　（イ） 簡単な語句や基本的な表現を用いて，自分の趣味や｛得意｝なことなどを含めた｛自己紹介｝をする活動。\n\n　　（ウ） 簡単な語句や基本的な表現を用いて，学校生活や｛地域｝に関することなど，身近で簡単な事柄について，自分の考えや気持ちなどを話す活動。\n\n　オ 書くこと\n\n　　（ア） 文字の読み方が｛発音｝されるのを聞いて，活字体の大文字，小文字を書く活動。\n\n　　（イ） 相手に伝えるなどの目的をもって，身近で簡単な事柄について，音声で十分に慣れ親しんだ簡単な語句を｛書き写す｝活動。\n\n　　（ウ） 相手に伝えるなどの目的をもって，語と語の｛区切り｝に注意して，身近で簡単な事柄について，音声で十分に慣れ親しんだ基本的な表現を書き写す活動。\n\n　　（エ） 相手に伝えるなどの目的をもって，名前や年齢，趣味，好き嫌いなど，自分に関する簡単な事柄について，音声で十分に慣れ親しんだ簡単な語句や基本的な表現を用いた例の中から言葉を選んで書く活動。\n\n② 言語の働きに関する事項 言語活動を行うに当たり，主として次に示すような言語の使用場面や言語の働きを取り上げるようにする。\n\n　ア 言語の使用場面の例\n\n　　（ア） 児童の身近な｛暮らし｝に関わる場面・ 家庭での生活 ・ 学校での学習や活動・ 地域の行事 など\n\n　　（イ） ｛特有｝の表現がよく使われる場面・ 挨拶     ・ 自己紹介   ・ 買物・ 食事     ・ ｛道案内｝    ・ 旅行 など\n\n　イ 言語の働きの例\n\n　　（ア） コミュニケーションを円滑にする・ 挨拶をする  ・ 呼び掛ける  ・ ｛相槌を打つ｝・ 聞き直す   ・ ｛繰り返す｝ など\n\n　　（イ） 気持ちを伝える・ 礼を言う   ・ 褒める    ・ 謝る など\n\n　　（ウ） 事実・情報を伝える・ 説明する   ・ ｛報告｝する   ・ 発表する など\n\n　　（エ） 考えや｛意図｝を伝える・ 申し出る   ・ 意見を言う  ・ 賛成する・ ｛承諾する｝   ・ 断る など\n\n　　（オ） 相手の行動を｛促す｝・ 質問する   ・ 依頼する   ・ 命令する など\n\n&lt;em&gt;３ 指導計画の作成と内容の取扱い&lt;/em&gt;\n\n　(1) 指導計画の作成に当たっては，第３学年及び第４学年並びに中学校及び高等学校における指導との接続に留意しながら，次の事項に配慮するものとする。\n\n　ア 単元など内容や時間のまとまりを見通して，その中で育む｛資質｝・能力の育成に向けて，児童の主体的・｛対話｝的で深い学びの実現を図るようにすること。その際，具体的な｛課題｝等を設定し，児童が外国語によるコミュニケーションにおける｛見方｝・考え方を働かせながら，コミュニケーションの目的や場面，状況などを意識して活動を行い，英語の音声や語彙，表現などの知識を，五つの領域における実際のコミュニケーションにおいて活用する学習の充実を図ること。\n\n　イ 学年ごとの目標を適切に定め，２学年間を通じて外国語科の目標の実現を図るようにすること。\n\n　ウ 実際に英語を使用して互いの考えや気持ちを伝え合うなどの言語活動を行う際は，２の(1)に示す言語材料について理解したり練習したりするための指導を必要に応じて行うこと。また，第３学年及び第４学年において第４章外国語活動を履修する際に扱った簡単な｛語句｝や基本的な表現などの学習内容を繰り返し指導し定着を図ること。\n\n　エ 児童が英語に多く触れることが期待される英語学習の特質を踏まえ，必要に応じて，特定の事項を取り上げて第１章総則の第２の３の(2)のウの（イ）に掲げる指導を行うことにより，指導の効果を高めるよう工夫すること。このような指導を行う場合には，当該指導のねらいやそれを関連付けて指導を行う事項との関係を明確にするとともに，単元など内容や時間のまとまりを見通して資質・能力が偏りなく育成されるよう計画的に指導すること。\n\n　オ 言語活動で扱う題材は，児童の｛興味｝・｛関心｝に合ったものとし，国語科や音楽科，図画工作科など，他の教科等で児童が学習したことを活用したり，学校行事で扱う内容と関連付けたりするなどの工夫をすること。\n\n　カ ｛障害｝のある児童などについては，学習活動を行う場合に生じる｛困難さ｝に応じた指導内容や指導方法の工夫を計画的，組織的に行うこと。キ ｛学級担任｝の教師又は外国語を担当する教師が指導計画を作成し，授業を実施するに当たっては，｛ネイティブ・スピーカー｝や英語が堪能な地域人材などの協力を得る等，指導体制の充実を図るとともに，指導方法の工夫を行うこと。\n\n　(2) ２の内容の取扱いについては，次の事項に配慮するものとする。\n\n　ア ２の(1)に示す言語材料については，平易なものから難しいものへと｛段階｝的に指導すること。また，児童の｛発達｝の段階に応じて，聞いたり読んだりすることを通して意味を理解できるように指導すべき事項と，話したり書いたりして表現できるように指導すべき事項とがあることに留意すること。\n\n　イ 音声指導に当たっては，｛日本語｝との違いに留意しながら，発音練習などを通して２の(1)のアに示す言語材料を指導すること。また，音声と文字とを関連付けて指導すること。\n\n　ウ 文や文構造の指導に当たっては，次の事項に留意すること。\n\n　　（ア） 児童が日本語と英語との｛語順｝等の違いや，関連のある文や文構造のまとまりを認識できるようにするために，｛効果的｝な指導ができるよう工夫すること。\n\n　　（イ） 文法の用語や用法の指導に偏ることがないよう配慮して，言語活動と効果的に関連付けて指導すること。\n\n　エ 身近で簡単な事柄について，友達に質問をしたり質問に答えたりする力を育成するため，｛ペア・ワーク｝，グループ・ワークなどの学習形態について適宜工夫すること。その際，他者と｛コミュニケーション｝を行うことに課題がある児童については，個々の児童の特性に応じて指導内容や指導方法を工夫すること。\n\n　オ 児童が身に付けるべき資質・能力や児童の実態，教材の内容などに応じて，視聴覚教材やコンピュータ，情報通信ネットワーク，教育機器などを有効活用し，児童の興味・関心をより高め，指導の｛効率化｝や言語活動の更なる充実を図るようにすること。\n\n　カ 各単元や各時間の指導に当たっては，コミュニケーションを行う目的，場面，状況などを明確に設定し，言語活動を通して育成すべき資質・能力を明確に示すことにより，児童が学習の見通しを立てたり，振り返ったりすることができるようにすること。\n\n　(3) 教材については，次の事項に留意するものとする。\n\n　ア 教材は，聞くこと，読むこと，話すこと［やり取り］，話すこと［発表］，書くことなどのコミュニケーションを図る基礎となる資質・能力を総合的に育成するため，１に示す五つの領域別の目標と２に示す内容との関係について，単元など内容や時間のまとまりごとに各教材の中で明確に示すとともに，実際の言語の使用場面や言語の｛働き｝に十分配慮した題材を取り上げること。\n\n　イ 英語を使用している人々を中心とする世界の人々や日本人の日常生活，｛風俗習慣｝，｛物語｝，地理，歴史，伝統文化，｛自然｝などに関するものの中から，児童の発達の段階や興味・関心に即して適切な題材を変化をもたせて取り上げるものとし，次の観点に配慮すること。\n\n　　（ア） 多様な考え方に対する理解を深めさせ，｛公正｝な判断力を養い豊かな心情を育てることに役立つこと。\n\n　　（イ） 我が国の文化や，英語の背景にある｛文化｝に対する関心を高め，理解を深めようとする態度を養うことに役立つこと。\n\n　　（ウ） 広い視野から｛国際理解｝を深め，国際社会と向き合うことが求められている我が国の一員としての自覚を高めるとともに，｛国際協調｝の精神を養うことに役立つこと。\n\n&lt;h4&gt;その他の外国語&lt;/h4&gt;\n\n　その他の外国語については，英語の１に示す五つの領域別の目標，２に示す内容及び３に示す指導計画の作成と内容の取扱いに準じて指導を行うものとする。\n\n&lt;h2&gt;第３　指導計画の作成と内容の取り扱い&lt;/h2&gt;\n\n　１ 外国語科においては，｛英語｝を履修させることを原則とすること。\n\n　２ 第１章総則の第１の２の(2)に示す道徳教育の目標に基づき，道徳科などとの関連を考慮しながら，第３章特別の教科｛道徳｝の第２に示す内容について，外国語科の特質に応じて適切な指導をすること。";
+// === end of qdata
+
+// ヒント hint
+var hintdata = "";
+// === end of hintdata
+
+h = new Array();
+if (hint_btn || bt_func =="hint") h = makehint(hintdata);
+
+separator = new Array("｛","｝","｜");
+tag0 = new Array("&lt;","&gt;");
+tag1 = new Array("&amp;lt;","&amp;gt;");
+
+if (gyoshori=="normal" || gyoshori=="bunkatu") question = rowsplit(qdata);
+if (gyoshori=="br") question = plusbr(qdata);
+if (gyoshori=="thru") question = qdata;
+
+// 問題番号文字列をセット NUM:空欄の数 文字不足時は数字にセット
+var x=0, NUM=0, qnlen;
+while(x&gt;=0){
+  x=question.indexOf(separator[0],x);
+  if (x==-1) break;
+  x++; NUM++;
+}
+qnlen = qn_string.length;
+var qns = qn_string.substring(0,1), qnn;
+if (qns=="1" || qns=="a" || qns=="A") qnn=1; else qnn="あ".length;
+for(i=1;i&lt;=qnlen;i++) { qn[i]=qn_string.substring((i-1)*qnn,i*qnn);}
+if (qnlen&lt;NUM) for(i=1;i&lt;=NUM;i++) { qn[i]=i; }
+
+s = new Array();
+for (i=0;i&lt;=NUM;i++) s[i] = new Array();  // select form value 配列
+
+// 問題文中から穴埋め箇所と解答を抽出し，Form TAG に置き換え
+var x0=0, x1=0, x2=0, i=1, ql, str="", bx_size;
+while(x1&gt;=0){
+  ql=question.length;
+  x1 = question.indexOf(separator[0],x0);
+  if (x1==-1) break;
+  x2 = question.indexOf(separator[1],x0);
+  a[i] = question.substring(x1+separator[0].length, x2);
+  if (tag_conv) a[i]=tagrev(a[i]);
+  str = question.substring(0,x1);
+  if (a[i].indexOf(separator[2],0)==-1){
+    if (box_size=="") bx_size=jstrlen(a[i]); else bx_size=box_size;
+    str += "&lt;input name=q" + i + " size=" + bx_size + "&gt;";
+  } else {
+    str += fselect(a[i],i);
+  }
+  if (bt_func != "nodisp") str += "&lt;input type=button value='" + qn[i] + "' class=qn";
+  if (bt_func == "seigo") str += " onClick='hantei(" + i + ")'&gt;";
+  if (bt_func == "hint") str += " onClick='alert(\"" + h[i] + "\")'&gt;";
+  if (bt_func == "none") str += "&gt;";
+  x0 = str.length;
+  question = str + question.substring(x2+separator[1].length,ql);
+  i++;
+}
+
+var str_body = "&lt;div class=honbun&gt;&lt;form name=f&gt;";
+str_body += "&lt;h3 class=ptitle&gt;" + ptitle + "&lt;\/h3&gt;";
+str_body += "&lt;b class=qtop&gt;" + mondai_top + "&lt;\/b&gt;";
+str_body += "&lt;hr width=600&gt;&lt;div class=mondai&gt;" + question + "&lt;\/div&gt;&lt;hr width=600&gt;";
+str_body += "&lt;table width=600&gt;&lt;tr&gt;&lt;td&gt;";
+str_body += "&lt;div align=center&gt;&lt;input type=button value='採点' onClick='saiten();' class=bt&gt;　&lt;input type=reset value='リセット' class=bt&gt;";
+str_body += "　&lt;input type=button value='解答' onClick='kaito();' class=bt&gt;";
+if (hint_btn) str_body += "　&lt;input type=button value='ヒント' onClick='hintdisp();' class=bt&gt;";
+
+str_body += "&lt;\/td&gt;&lt;\/tr&gt;&lt;\/table&gt;&lt;\/form&gt;&lt;\/div&gt;";
+
+
+// ------------ サブルーチン -------------
+
+// ヒント配列 h[] の作成
+function makehint(data) {
+  str = data.split("\n");
+  h = new Array();
+  j=1;
+  for (i in str){
+    if (str[i] != "") {
+      h[j] = str[i];
+      j++;
+    }
+  }
+  return h; 
+}
+
+// データを空行で分割
+function qconv(data){
+  str = data.split("\n");
+  var j=1;
+  q[j]="";
+  for (i in str) {
+    if (str[i] != "") {
+       q[j] += str[i] + "&lt;br&gt;";
+    } else if (i&gt;0) {
+       if (str[i-1] != "") j++;
+       q[j]="";
+    }
+  }
+  return j-1;
+}
+
+// データを行単位で分割
+function qconv2(data){
+  str = data.split("\n");
+  j=1;
+  for (i in str) {
+    if (str[i] != "") { q[j]=str[i]; j++; }
+  }
+  return j-1;
+}
+
+// データを行, 空行で分割し，行末に改行タグを挿入。shuffleの場合はランダム化
+function rowsplit(data){
+  str = data.split("\n");
+  q = new Array();
+  x = new Array();
+  hintm = new Array();
+
+  if (gyoshori=="normal") j = qconv(data);
+  if (gyoshori=="bunkatu") j = qconv2(data);
+
+  // ヒントを２次元配列 hintm[][] に格納
+  for (i=0;i&lt;=j;i++) hintm[i] = new Array();
+  var xx=0, m=0, n;  // m:何問目
+  for (i=1;i&lt;=j;i++){
+     xx=0; n=0;
+     while(xx&gt;=0){
+       xx=q[i].indexOf(separator[0],xx);
+       if (xx==-1) break;
+       xx++; m++; n++;
+       hintm[i][n] = h[m];  // i問目のn番目のヒント
+     }
+  }
+
+  x = ransu(j);
+  var ss = "&lt;table width=600 border=0 cellpadding=5 cellspacing=0&gt;";
+  m=0;
+  for (i=1;i&lt;=j;i++){
+    if (shuffle) {
+        k=x[i];
+        // ヒント配列組み直し
+        xx=0; n=0;
+        while(xx&gt;=0){
+          xx=q[k].indexOf(separator[0],xx);
+          if (xx==-1) break;
+          xx++; m++; n++;
+          h[m] = hintm[k][n];  // k問目のn番目のヒント
+        }
+    } else k=i;
+    if (i % 2 == 1) { bgc=bgc1; txtc=txtc1;} else { bgc=bgc2; txtc=txtc2; }
+    ss += "&lt;tr&gt;&lt;td bgcolor=" + bgc + " valign=top width=36&gt;";
+    ss += "&lt;table border=2 cellspacing=0&gt;&lt;tr&gt;&lt;th width=24 height=24 bgcolor=pink&gt;&lt;font color=black&gt;" + i + "&lt;\/font&gt;&lt;\/th&gt;&lt;\/tr&gt;&lt;\/table&gt;&lt;\/td&gt;";
+    ss += "&lt;td bgcolor=" + bgc + " width=564&gt;&lt;font color=" + txtc + "&gt;"+ pre1 + q[k] + pre2 + "&lt;\/font&gt;&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  ss += "&lt;\/table&gt;";
+  return ss;
+}
+
+// データはそのままに，各行の最後に &lt;br&gt;を挿入
+function plusbr(data){
+  str = data.split("\n");
+  var ss="";
+  for (i in str) ss += str[i] + "&lt;br&gt;";
+  return ss;
+}
+
+// 文字列からセパレータ｜を探し，選択肢を抽出。select form 作成
+function fselect(str,n) {
+  var x=0, i=1, j, data;
+  var xr = new Array();
+  var w = new Array();
+  s[n][0]=""; w[0]="";
+  while(x&gt;=0){
+    alen = str.length;
+    x = str.indexOf(separator[2],0);
+    if (x==-1) break;
+    w[i]=str.substring(0,x);
+    str = str.substring(x+separator[2].length,alen);
+    i++;
+  }
+  w[i]=str;
+  a[n]=w[1];  // 正解を a[n] にセット
+  data = "&lt;select name=q"  + n + "&gt;&lt;option value=''&gt; ";
+  if (ssort)  w.sort(); else xr = ransu(i);
+  for (j=1;j&lt;=i;j++){
+    if (ssort) k = j; else k = xr[j];
+    data += "&lt;option value='" + w[k] + "'&gt;" + w[k];
+    s[n][j]=w[k];
+  }
+  data += "&lt;\/select&gt;";
+  return data;
+}
+
+// n までの整数をランダムに発生  戻り値 x[]
+function ransu(n) {
+  var k=1, l,  bingo;
+  var x=new Array();
+  x[k] = Math.floor(n * Math.random())+1;
+  k++;
+  while ( k&lt;=n ) {
+    x[k] = Math.floor(n * Math.random())+1;
+    bingo = 0;
+    for (l=1; l&lt;k; l++) {  // すでに同じ数字がないかチェック
+       if ( x[k] == x[l] ) { bingo=1; break; }
+    }
+    if (bingo==0) k++;     // 同じ数字がなければ k++
+  }
+  return x;
+}
+
+// 文字列の長さを返す（日本語を２としてカウント）
+function jstrlen(str) {
+  var len = 0, i;
+  str = escape(str);
+  for (i=0;i&lt;str.length;i++,len++) {
+    if (str.charAt(i) == "%") {
+      if (str.charAt(++i) == "u") {
+        i += 3;
+        len++;
+      }
+      i++;
+    }
+  }
+  return len;
+}
+
+// タグ文字変換 &lt;&gt; → &amp;lt; &amp;gt;
+function tagconv(s){
+  var i, x;
+  for(i in tag0){
+    x = s.indexOf(tag0[i],0);
+    while(x&gt;-1){
+      s = s.substring(0,x) + tag1[i] + s.substring(x+tag0[i].length,s.length);
+      x = s.indexOf(tag0[i],0);
+    }
+  }
+  return s;
+}
+
+// タグ文字変換 &amp;lt; &amp;gt; → &lt;&gt;
+function tagrev(s){
+  var i, x;
+  for(i in tag1){
+    x = s.indexOf(tag1[i],0);
+    while(x&gt;-1){
+      s = s.substring(0,x) + tag0[i] + s.substring(x+tag1[i].length,s.length);
+      x = s.indexOf(tag1[i],0);
+    }
+  }
+  return s;
+}
+
+// 正誤判定ボタンを押した時の処理
+function hantei(m) {
+  var answer="";
+  if (document.f.elements[(m-1)*2].type == "text") { 
+    answer = document.f.elements[(m-1)*2].value;
+  } else {
+    answer = s[m][document.f.elements[(m-1)*2].selectedIndex];
+  }
+  if (answer==a[m]) alert("○ 正解！"); else alert("× 違うよ！");
+}
+
+// 採点し，score を返す
+function scorecheck(){
+  var tmp, data="", seikai=0, mm;
+  answer = new Array();
+  maru = new Array();
+  if (bt_func == "nodisp") mm=1; else mm=2;
+  // 正解数をカウントし，○×判定 maru[]
+  for (i=1;i&lt;=NUM;i++) {
+    if (document.f.elements[(i-1)*mm].type=="text") {
+        answer[i] = document.f.elements[(i-1)*mm].value;
+    } else {
+      answer[i] = s[i][document.f.elements[(i-1)*mm].selectedIndex];
+    }
+    if (answer[i] == a[i]) {
+       maru[i] = true;
+       seikai += 1;
+    } else { maru[i]=false; }
+  }
+  score = Math.floor(100*seikai/NUM + 0.5);
+  return score;
+}
+
+// 採点ボタンを押したときの処理
+function saiten(){
+  score = scorecheck();
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;採点結果&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=pink&gt;&lt;center&gt;";
+  data += "&lt;h3&gt;結　果&lt;\/h3&gt;&lt;form&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt;問&lt;\/th&gt;&lt;th width=120&gt;あなたの解答&lt;\/th&gt;&lt;th&gt;正誤&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;&lt;td nowrap&gt;　" + tagconv(answer[i]) + "&lt;\/td&gt;&lt;th&gt;";
+    data += "&lt;font ";
+    if (maru[i]) data += "color=blue&gt;○"; else data += "color=red&gt;×";
+    data += "&lt;\/font&gt;&lt;\/th&gt;";
+    data += "&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;";
+  data += "&lt;font color=red&gt;&lt;u&gt;&lt;font size=7&gt;" + score + "&lt;\/font&gt;&lt;\/u&gt;&lt;font size=6&gt; 点&lt;\/font&gt;&lt;\/font&gt;&lt;br&gt;";
+  if (!kaito_ctrl &amp;&amp; score &lt; shikii) data += "&lt;small&gt;" + shikii + "点以上で解答が見られます&lt;\/small&gt;&lt;br&gt;";
+  data += "&lt;br&gt;&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+  Win0opened = true;
+  wh = 25*NUM + 230;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=350,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+
+// 解答ボタンを押したときの処理
+function kaito(){
+  var tmpk=null, chk="", data="", c;
+  // 解答しているかどうかチェック
+  if (bt_func == "nodisp") mm=1; else mm=2;
+  for (i=1;i&lt;=NUM;i++) { 
+    tmpk = document.f.elements[(i-1)*mm].value;
+    if (document.f.elements[(i-1)*mm].type=="text") chk += tmpk; else 
+       chk += s[i][document.f.elements[(i-1)*mm].selectedIndex];
+  }
+  if ( chk == "" ) { alert("ちゃんと答えてからね！"); return; }
+  score = scorecheck();
+  if (!kaito_ctrl &amp;&amp; score &lt; shikii) { alert(shikii + "点以上取らないとダメです"); return; }
+
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;解答&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=lavender&gt;&lt;center&gt;";
+  data += "&lt;h3&gt;解答&lt;\/h3&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt; 問 &lt;\/th&gt;&lt;th width=150&gt;解答&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;";
+    if (maru[i]) c="black"; else c="red";
+    data += "&lt;td align=center&gt;&lt;font color=" + c + "&gt;" + tagconv(a[i]) + "&lt;\/font&gt;&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;&lt;br&gt;&lt;form&gt;";
+  data += "&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+
+  Win0opened = true;
+  wh = 25*NUM + 160;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=300,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+// ヒント一覧
+function hintdisp (){
+  var data="";
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;解答&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=lavender&gt;&lt;center&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt; 問 &lt;\/th&gt;&lt;th width=150&gt;ヒント&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;";
+    data += "&lt;td&gt;" + h[i] + "&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;&lt;br&gt;&lt;form&gt;";
+  data += "&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+
+  Win0opened = true;
+  wh = 25*NUM + 140;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=300,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+// Unload したとき
+function winclose(){
+  if (Win0opened &amp;&amp; !Win0.closed) Win0.close();
+}
+
+// --&gt;
+&lt;/script&gt;
+
+&lt;!--&lt;/head&gt;--&gt;
+
+&lt;!--================ 本文はここから ====================--&gt;
+
+&lt;p&gt;&lt;body bgcolor=white text=black onUnload="winclose()"&gt;
+&lt;noscript&gt;
+この WEB問題（穴埋め問題）は JavaScript 1.1で書かれています。&lt;br&gt;
+Netscape Navigator 3.0 以上 または Internet Explorer 4.0 以上でご覧下さい。&lt;br&gt;
+WEB問題作成ツール http://www.fureai.or.jp/~irie/webquiz/ &lt;br&gt;
+&lt;/noscript&gt;&lt;/p&gt;
+&lt;script type="text/javascript" language="JavaScript"&gt;
+&lt;!--
+  document.write(str_body); 
+// --&gt;
+&lt;/script&gt;
+
+&lt;p&gt;&lt;/body&gt;
+&lt;/html&gt;&lt;/p&gt;</content><category term="Elementary"></category><category term="学習指導要領"></category><category term="穴埋め問題"></category></entry><entry><title>図画工作 小学校学習指導要領（平成２９年告示） 穴埋め問題</title><link href="/E005.html" rel="alternate"></link><published>2020-06-01T00:00:00+09:00</published><updated>2020-06-01T00:00:00+09:00</updated><author><name>aar0429</name></author><id>tag:None,2020-06-01:/E005.html</id><summary type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="ja"&gt;
+&lt;!--&lt;head&gt;--&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS"&gt;
+&lt;!----&gt;
+&lt;title&gt;図画工作 小学校学習指導要領（平成２９年告示） 穴埋め問題&lt;/title&gt;
+&lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
+&lt;meta http-equiv="Content-Script-Type" content="text/javascript"&gt;
+&lt;style type="text/css"&gt;
+&lt;!--
+body  { background-color:white; color:black}
+table,td,th { font-size:16px; }
+input { font-size:16px; font-family:monospace; vertical-align:middle;}
+input.qn { font-size:12px; font-family:monospace; vertical-align:middle; }
+input.bt { font-size:14px; vertical-align:middle; }
+select  { font-size:16px; font-family:monospace; vertical-align:middle;}
+hr      { color:lavender; height:5px; }
+.honbun { width:600 …&lt;/style&gt;&lt;/meta&gt;&lt;/meta&gt;&lt;/meta&gt;&lt;/html&gt;</summary><content type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="ja"&gt;
+&lt;!--&lt;head&gt;--&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS"&gt;
+&lt;!----&gt;
+&lt;title&gt;図画工作 小学校学習指導要領（平成２９年告示） 穴埋め問題&lt;/title&gt;
 &lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
 &lt;meta http-equiv="Content-Script-Type" content="text/javascript"&gt;
 &lt;style type="text/css"&gt;
@@ -68,6 +1010,1419 @@ mondai_top = "以下の文中の空欄を適当な語句でうめて完成させ
 
 // 問題文 qdata
 var qdata = "　&lt;h2&gt;第１　目標&lt;/h2&gt;\n\n　表現及び鑑賞の活動を通して，｛造形的｝な見方・考え方を働かせ，生活や社会の中の形や色などと豊かに関わる資質・能力を次のとおり育成することを目指す。\n\n　(1) 対象や事象を捉える造形的な視点について自分の｛感覚｝や行為を通して理解するとともに，材料や用具を使い，｛表し方｝などを工夫して，｛創造的｝につくったり表したりすることができるようにする。\n\n　(2) 造形的なよさや｛美しさ｝，表したいこと，表し方などについて考え，創造的に発想や構想をしたり，作品などに対する自分の見方や感じ方を深めたりすることができるようにする。\n\n　(3) つくりだす｛喜び｝を味わうとともに，｛感性｝を育み，楽しく豊かな生活を創造しようとする態度を養い，豊かな｛情操｝を培う。\n\n&lt;h2&gt;第２　各学年の目標及び内容&lt;/h2&gt;\n\n&lt;h4&gt;第1学年及び第2学年&lt;/h4&gt;\n\n&lt;em&gt;1　目標&lt;/em&gt;\n\n　(1) 対象や事象を捉える造形的な視点について自分の感覚や行為を通して気付くとともに，｛手｝や体全体の感覚などを働かせ材料や用具を使い，表し方などを工夫して，創造的につくったり表したりすることができるようにする。\n\n　(2) 造形的な面白さや楽しさ，表したいこと，表し方などについて考え，楽しく｛発想｝や構想をしたり，身の回りの作品などから自分の見方や感じ方を広げたりすることができるようにする。\n\n　(3) 楽しく表現したり｛鑑賞｝したりする活動に取り組み，つくりだす喜びを味わうとともに，形や色などに関わり楽しい｛生活｝を創造しようとする態度を養う。\n\n&lt;em&gt;2　内容&lt;/em&gt;\n\n A　表現\n\n　(1) 表現の活動を通して，発想や構想に関する次の事項を身に付けることができるよう指導する。\n\n　　ア 造形遊びをする活動を通して，身近な自然物や人工の材料の形や色などを基に造形的な活動を思い付くことや，感覚や｛気持ち｝を生かしながら，どのように活動するかについて考えること。\n\n　　イ 絵や｛立体｝，工作に表す活動を通して，感じたこと，想像したことから，｛表したい｝ことを見付けることや，好きな形や色を選んだり，いろいろな形や色を考えたりしながら，どのように表すかについて考えること。\n\n　(2) 表現の活動を通して，｛技能｝に関する次の事項を身に付けることができるよう指導する。\n\n　　ア 造形遊びをする活動を通して，身近で扱いやすい材料や用具に十分に慣れるとともに，｛並べたり｝，つないだり，｛積んだり｝するなど手や体全体の感覚などを働かせ，活動を工夫してつくること。\n\n　　イ 絵や立体，工作に表す活動を通して，身近で扱いやすい材料や用具に十分に慣れるとともに，手や体全体の感覚などを働かせ，表したいことを基に表し方を工夫して表すこと。\n\nＢ 鑑賞\n\n　(1) 鑑賞の活動を通して，次の事項を身に付けることができるよう指導する。\n\n　　ア 身の回りの作品などを鑑賞する活動を通して，自分たちの作品や身近な材料などの造形的な面白さや楽しさ，表したいこと，表し方などについて，感じ取ったり考えたりし，自分の見方や感じ方を広げること。 〔共通事項〕\n\n　(1) 「Ａ表現」及び「Ｂ鑑賞」の指導を通して，次の事項を身に付けることができるよう指導する。\n\n　　ア 自分の感覚や行為を通して，｛形｝や色などに気付くこと。\n\n　　イ 形や色などを基に，自分の｛イメージ｝をもつこと。\n\n&lt;h4&gt;第3学年及び第4学年&lt;/h4&gt;\n\n&lt;em&gt;1　目標&lt;/em&gt;\n\n　(1) 対象や事象を捉える造形的な視点について自分の感覚や行為を通して分かるとともに，手や体全体を十分に働かせ材料や用具を使い，表し方などを工夫して，創造的につくったり表したりすることができるようにする。\n\n　(2) 造形的なよさや面白さ，表したいこと，表し方などについて考え，豊かに発想や構想をしたり，身近にある作品などから自分の見方や｛感じ方｝を広げたりすることができるようにする。\n\n　(3) 進んで表現したり鑑賞したりする活動に取り組み，つくりだす喜びを味わうとともに，形や色などに関わり楽しく｛豊かな｝生活を創造しようとする態度を養う。\n\n&lt;em&gt;2　内容&lt;/em&gt;\n\nA　表現\n\n　(1) 表現の活動を通して，発想や構想に関する次の事項を身に付けることができるよう指導する。\n\n　　ア 造形遊びをする活動を通して，身近な材料や｛場所｝などを基に造形的な活動を思い付くことや，新しい形や色などを思い付きながら，どのように活動するかについて考えること。\n\n　　イ 絵や立体，工作に表す活動を通して，感じたこと，｛想像した｝こと，見たことから，表したいことを見付けることや，表したいことや｛用途｝などを考え，形や色，材料などを生かしながら，どのように表すかについて考えること。\n\n　(2) 表現の活動を通して，技能に関する次の事項を身に付けることができるよう指導する。\n\n　　ア 造形遊びをする活動を通して，材料や用具を適切に扱うとともに，前学年までの材料や用具についての経験を生かし，組み合わせたり，切ってつないだり，形を変えたりするなどして，手や体全体を十分に働かせ，活動を工夫してつくること。\n\n　　イ 絵や立体，工作に表す活動を通して，材料や用具を適切に扱うとともに，前学年までの材料や用具についての経験を生かし，手や体全体を十分に働かせ，表したいことに合わせて表し方を工夫して表すこと。\n\n Ｂ 鑑 賞\n\n　(1) 鑑賞の活動を通して，次の事項を身に付けることができるよう指導する。\n\n　　ア 身近にある作品などを鑑賞する活動を通して，自分たちの作品や身近な美術作品，製作の｛過程｝などの造形的なよさや面白さ，表したいこと，いろいろな表し方などについて，感じ取ったり考えたりし，自分の見方や感じ方を広げること。\n\n[共通事項]\n\n　(1) 「Ａ表現」及び「Ｂ鑑賞」の指導を通して，次の事項を身に付けることができるよう指導する。\n\n　　ア 自分の感覚や行為を通して，形や色などの感じが分かること。\n\n　　イ 形や色などの感じを基に，自分のイメージをもつこと。\n\n&lt;h4&gt;第5学年及び第6学年&lt;/h4&gt;\n\n&lt;em&gt;1　目標&lt;/em&gt;\n\n　(1) 対象や事象を捉える造形的な視点について自分の感覚や行為を通して理解するとともに，材料や用具を活用し，表し方などを工夫して，創造的につくったり表したりすることができるようにする。\n\n　(2) 造形的なよさや美しさ，表したいこと，表し方などについて考え，創造的に発想や構想をしたり，｛親しみのある｝作品などから自分の見方や感じ方を深めたりすることができるようにする。\n\n　(3) ｛主体的｝に表現したり鑑賞したりする活動に取り組み，つくりだす喜びを味わうとともに，形や色などに関わり楽しく豊かな生活を創造しようとする態度を養う。\n\n２ 内 容\n\nＡ 表 現\n\n　(1) 表現の活動を通して，発想や構想に関する次の事項を身に付けることができるよう指導する。\n\n　　ア 造形遊びをする活動を通して，材料や場所，｛空間｝などの特徴を基に造形的な活動を思い付くことや，構成したり｛周囲｝の様子を考え合わせたりしながら，どのように活動するかについて考えること。\n\n　　イ 絵や立体，工作に表す活動を通して，感じたこと，想像したこと，見たこと，｛伝え合いたい｝ことから，表したいことを見付けることや，形や色，材料の特徴，｛構成｝の美しさなどの感じ，用途などを考えながら，どのように主題を表すかについて考えること。\n\n　(2) 表現の活動を通して，技能に関する次の事項を身に付けることができるよう指導する。\n\n　　ア 造形遊びをする活動を通して，活動に応じて材料や用具を活用するとともに，前学年までの材料や用具についての経験や技能を総合的に生かしたり，｛方法｝などを組み合わせたりするなどして，活動を工夫してつくること。\n\n　　イ 絵や立体，工作に表す活動を通して，表現方法に応じて材料や用具を｛活用｝するとともに，前学年までの材料や用具などについての経験や技能を総合的に生かしたり，表現に適した方法などを組み合わせたりするなどして，表したいことに合わせて表し方を工夫して表すこと。 \n\nＢ 鑑 賞\n\n　(1) 鑑賞の活動を通して，次の事項を身に付けることができるよう指導する。\n\n　　ア 親しみのある作品などを鑑賞する活動を通して，自分たちの作品，｛我が国｝や｛諸外国｝の親しみのある美術作品，｛生活｝の中の造形などの造形的なよさや美しさ，表現の｛意図｝や特徴，表し方の変化などについて，感じ取ったり考えたりし，自分の見方や感じ方を深めること。 \n\n〔共通事項〕\n\n　(1) 「Ａ表現」及び「Ｂ鑑賞」の指導を通して，次の事項を身に付けることができるよう指導する。\n\n　　ア 自分の感覚や｛行為｝を通して，形や色などの造形的な特徴を理解すること。\n\n　　イ 形や色などの造形的な特徴を基に，自分の｛イメージ｝をもつこと。\n\n&lt;h2&gt;第3　指導計画の作成と内容の取り扱い&lt;/h2&gt;\n\n　１ 指導計画の作成に当たっては，次の事項に配慮するものとする。\n\n　(1) 題材など内容や時間のまとまりを見通して，その中で育む資質・能力の育成に向けて，児童の主体的・｛対話的｝で深い学びの実現を図るようにすること。その際，造形的な見方・考え方を働かせ，｛表現｝及び鑑賞に関する資質・能力を相互に関連させた学習の充実を図ること。\n\n　　(2) 第２の各学年の内容の「Ａ表現」及び「Ｂ鑑賞」の指導については相互の｛関連｝を図るようにすること。ただし，「Ｂ鑑賞」の指導については，指導の効果を高めるため必要がある場合には，児童や学校の実態に応じて，｛独立｝して行うようにすること。\n\n　(3) 第２の各学年の内容の〔共通事項〕は，表現及び鑑賞の学習において共通に必要となる資質・能力であり，「Ａ表現」及び「Ｂ鑑賞」の指導と併せて，十分な指導が行われるよう工夫すること。\n\n　(4) 第２の各学年の内容の「Ａ表現」については，造形遊びをする活動では，(1)のア及び(2)のアを，絵や立体，工作に表す活動では，(1)のイ及び(2)のイを関連付けて指導すること。その際，(1)のイ及び(2)のイの指導に配当する｛授業時間数｝については，工作に表すことの内容に配当する授業時数が，絵や立体に表すことの内容に配当する授業時数とおよそ｛等しく｝なるように計画すること。\n\n　(5) 第２の各学年の内容の「Ａ表現」の指導については，適宜共同してつくりだす活動を取り上げるようにすること。\n\n　(6) 第２の各学年の内容の「Ｂ鑑賞」においては，自分たちの作品や美術作品などの特質を踏まえて指導すること。\n\n　(7) 低学年においては，第１章総則の第２の４の(1)を踏まえ，｛他教科｝等との関連を積極的に図り，指導の効果を高めるようにするとともに，｛幼稚園教育要領｝等に示す幼児期の終わりまでに育ってほしい姿との関連を考慮すること。特に，小学校入学当初においては，｛生活科｝を中心とした合科的・関連的な指導や，弾力的な時間割の設定を行うなどの工夫をすること。\n\n　(8) 障害のある児童などについては，｛学習活動｝を行う場合に生じる困難さに応じた指導内容や指導方法の工夫を計画的，｛組織｝的に行うこと。\n\n　(9) 第１章総則の第１の２の(2)に示す｛道徳｝教育の目標に基づき，道徳科などとの関連を考慮しながら，第３章特別の教科道徳の第２に示す内容について，図画工作科の特質に応じて適切な指導をすること。\n\n　２ 第２の内容の取扱いについては，次の事項に配慮するものとする。\n\n　(1) 児童が｛個性｝を生かして活動することができるようにするため，学習活動や表現方法などに幅をもたせるようにすること。\n\n　(2) 各学年の「Ａ表現」及び「Ｂ鑑賞」の指導を通して，児童が〔共通事項〕のアとイとの関わりに気付くようにすること。\n\n　(3) 〔共通事項〕のアの指導に当たっては，次の事項に配慮し，必要に応じて，その後の学年で繰り返し取り上げること。\n\n　　ア 第１学年及び第２学年においては，いろいろな形や色，｛触った｝感じなどを捉えること。\n\n　　イ 第３学年及び第４学年においては，形の感じ，色の感じ，それらの組合せによる感じ，色の明るさなどを捉えること。\n\n　　ウ 第５学年及び第６学年においては，動き，奥行き，｛バランス｝，色の鮮やかさなどを捉えること。\n\n　(4) 各学年の「Ａ表現」の指導に当たっては，活動の全過程を通して児童が実現したい思いを大切にしながら活動できるようにし，自分のよさや可能性を見いだし，｛楽しく｝豊かな生活を創造しようとする態度を養うようにすること。\n\n　(5) 各活動において，互いのよさや個性などを認め｛尊重｝し合うようにすること。  \n\n　(6) 材料や用具については，次のとおり取り扱うこととし，必要に応じて，当該学年より前の学年において初歩的な形で取り上げたり，その後の学年で繰り返し取り上げたりすること。\n\n　　ア 第１学年及び第２学年においては，土，粘土，木，紙，｛クレヨン｝，パス，はさみ，のり，簡単な小刀類など身近で扱いやすいものを用いること。\n\n　　イ 第３学年及び第４学年においては，｛木切れ｝，板材，釘くぎ，水彩絵の具，小刀，使いやすい｛のこぎり｝，金づちなどを用いること。\n\n　　ウ 第５学年及び第６学年においては，針金，糸のこぎりなどを用いること。\n\n　(7) 各学年の「Ａ表現」の(1)のイ及び(2)のイについては，児童や学校の実態に応じて，児童が工夫して楽しめる程度の版に表す経験や｛焼成｝する経験ができるようにすること。\n\n　(8) 各学年の「Ｂ鑑賞」の指導に当たっては，児童や学校の実態に応じて，地域の美術館などを利用したり，連携を図ったりすること。\n\n　(9) 各学年の「Ａ表現」及び「Ｂ鑑賞」の指導に当たっては，思考力，判断力，｛表現力｝等を育成する観点から，〔共通事項〕に示す事項を視点として，感じたことや思ったこと，考えたことなどを，話したり聞いたり話し合ったりする，｛言葉｝で整理するなどの言語活動を充実すること。\n\n　(10) コンピュータ，カメラなどの情報機器を利用することについては，表現や鑑賞の活動で使う用具の一つとして扱うとともに，必要性を十分に検討して利用すること。\n\n　(11) ｛創造｝することの価値に気付き，自分たちの作品や美術作品などに表れている創造性を大切にする態度を養うようにすること。また，こうした態度を養うことが，｛美術文化｝の継承，発展，創造を支えていることについて理解する素地となるよう配慮すること。\n\n　３ 造形活動で使用する材料や用具，活動場所については，安全な扱い方について指導する，事前に点検するなどして，事故防止に留意するものとする。\n\n　４ 校内の適切な場所に作品を展示するなどし，平素の学校生活においてそれを鑑賞できるよう配慮するものとする。また，学校や地域の実態に応じて，校外に児童の作品を展示する機会を設けるなどするものとする。";
+// === end of qdata
+
+// ヒント hint
+var hintdata = "";
+// === end of hintdata
+
+h = new Array();
+if (hint_btn || bt_func =="hint") h = makehint(hintdata);
+
+separator = new Array("｛","｝","｜");
+tag0 = new Array("&lt;","&gt;");
+tag1 = new Array("&amp;lt;","&amp;gt;");
+
+if (gyoshori=="normal" || gyoshori=="bunkatu") question = rowsplit(qdata);
+if (gyoshori=="br") question = plusbr(qdata);
+if (gyoshori=="thru") question = qdata;
+
+// 問題番号文字列をセット NUM:空欄の数 文字不足時は数字にセット
+var x=0, NUM=0, qnlen;
+while(x&gt;=0){
+  x=question.indexOf(separator[0],x);
+  if (x==-1) break;
+  x++; NUM++;
+}
+qnlen = qn_string.length;
+var qns = qn_string.substring(0,1), qnn;
+if (qns=="1" || qns=="a" || qns=="A") qnn=1; else qnn="あ".length;
+for(i=1;i&lt;=qnlen;i++) { qn[i]=qn_string.substring((i-1)*qnn,i*qnn);}
+if (qnlen&lt;NUM) for(i=1;i&lt;=NUM;i++) { qn[i]=i; }
+
+s = new Array();
+for (i=0;i&lt;=NUM;i++) s[i] = new Array();  // select form value 配列
+
+// 問題文中から穴埋め箇所と解答を抽出し，Form TAG に置き換え
+var x0=0, x1=0, x2=0, i=1, ql, str="", bx_size;
+while(x1&gt;=0){
+  ql=question.length;
+  x1 = question.indexOf(separator[0],x0);
+  if (x1==-1) break;
+  x2 = question.indexOf(separator[1],x0);
+  a[i] = question.substring(x1+separator[0].length, x2);
+  if (tag_conv) a[i]=tagrev(a[i]);
+  str = question.substring(0,x1);
+  if (a[i].indexOf(separator[2],0)==-1){
+    if (box_size=="") bx_size=jstrlen(a[i]); else bx_size=box_size;
+    str += "&lt;input name=q" + i + " size=" + bx_size + "&gt;";
+  } else {
+    str += fselect(a[i],i);
+  }
+  if (bt_func != "nodisp") str += "&lt;input type=button value='" + qn[i] + "' class=qn";
+  if (bt_func == "seigo") str += " onClick='hantei(" + i + ")'&gt;";
+  if (bt_func == "hint") str += " onClick='alert(\"" + h[i] + "\")'&gt;";
+  if (bt_func == "none") str += "&gt;";
+  x0 = str.length;
+  question = str + question.substring(x2+separator[1].length,ql);
+  i++;
+}
+
+var str_body = "&lt;div class=honbun&gt;&lt;form name=f&gt;";
+str_body += "&lt;h3 class=ptitle&gt;" + ptitle + "&lt;\/h3&gt;";
+str_body += "&lt;b class=qtop&gt;" + mondai_top + "&lt;\/b&gt;";
+str_body += "&lt;hr width=600&gt;&lt;div class=mondai&gt;" + question + "&lt;\/div&gt;&lt;hr width=600&gt;";
+str_body += "&lt;table width=600&gt;&lt;tr&gt;&lt;td&gt;";
+str_body += "&lt;div align=center&gt;&lt;input type=button value='採点' onClick='saiten();' class=bt&gt;　&lt;input type=reset value='リセット' class=bt&gt;";
+str_body += "　&lt;input type=button value='解答' onClick='kaito();' class=bt&gt;";
+if (hint_btn) str_body += "　&lt;input type=button value='ヒント' onClick='hintdisp();' class=bt&gt;";
+
+str_body += "&lt;\/td&gt;&lt;\/tr&gt;&lt;\/table&gt;&lt;\/form&gt;&lt;\/div&gt;";
+
+
+// ------------ サブルーチン -------------
+
+// ヒント配列 h[] の作成
+function makehint(data) {
+  str = data.split("\n");
+  h = new Array();
+  j=1;
+  for (i in str){
+    if (str[i] != "") {
+      h[j] = str[i];
+      j++;
+    }
+  }
+  return h; 
+}
+
+// データを空行で分割
+function qconv(data){
+  str = data.split("\n");
+  var j=1;
+  q[j]="";
+  for (i in str) {
+    if (str[i] != "") {
+       q[j] += str[i] + "&lt;br&gt;";
+    } else if (i&gt;0) {
+       if (str[i-1] != "") j++;
+       q[j]="";
+    }
+  }
+  return j-1;
+}
+
+// データを行単位で分割
+function qconv2(data){
+  str = data.split("\n");
+  j=1;
+  for (i in str) {
+    if (str[i] != "") { q[j]=str[i]; j++; }
+  }
+  return j-1;
+}
+
+// データを行, 空行で分割し，行末に改行タグを挿入。shuffleの場合はランダム化
+function rowsplit(data){
+  str = data.split("\n");
+  q = new Array();
+  x = new Array();
+  hintm = new Array();
+
+  if (gyoshori=="normal") j = qconv(data);
+  if (gyoshori=="bunkatu") j = qconv2(data);
+
+  // ヒントを２次元配列 hintm[][] に格納
+  for (i=0;i&lt;=j;i++) hintm[i] = new Array();
+  var xx=0, m=0, n;  // m:何問目
+  for (i=1;i&lt;=j;i++){
+     xx=0; n=0;
+     while(xx&gt;=0){
+       xx=q[i].indexOf(separator[0],xx);
+       if (xx==-1) break;
+       xx++; m++; n++;
+       hintm[i][n] = h[m];  // i問目のn番目のヒント
+     }
+  }
+
+  x = ransu(j);
+  var ss = "&lt;table width=600 border=0 cellpadding=5 cellspacing=0&gt;";
+  m=0;
+  for (i=1;i&lt;=j;i++){
+    if (shuffle) {
+        k=x[i];
+        // ヒント配列組み直し
+        xx=0; n=0;
+        while(xx&gt;=0){
+          xx=q[k].indexOf(separator[0],xx);
+          if (xx==-1) break;
+          xx++; m++; n++;
+          h[m] = hintm[k][n];  // k問目のn番目のヒント
+        }
+    } else k=i;
+    if (i % 2 == 1) { bgc=bgc1; txtc=txtc1;} else { bgc=bgc2; txtc=txtc2; }
+    ss += "&lt;tr&gt;&lt;td bgcolor=" + bgc + " valign=top width=36&gt;";
+    ss += "&lt;table border=2 cellspacing=0&gt;&lt;tr&gt;&lt;th width=24 height=24 bgcolor=pink&gt;&lt;font color=black&gt;" + i + "&lt;\/font&gt;&lt;\/th&gt;&lt;\/tr&gt;&lt;\/table&gt;&lt;\/td&gt;";
+    ss += "&lt;td bgcolor=" + bgc + " width=564&gt;&lt;font color=" + txtc + "&gt;"+ pre1 + q[k] + pre2 + "&lt;\/font&gt;&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  ss += "&lt;\/table&gt;";
+  return ss;
+}
+
+// データはそのままに，各行の最後に &lt;br&gt;を挿入
+function plusbr(data){
+  str = data.split("\n");
+  var ss="";
+  for (i in str) ss += str[i] + "&lt;br&gt;";
+  return ss;
+}
+
+// 文字列からセパレータ｜を探し，選択肢を抽出。select form 作成
+function fselect(str,n) {
+  var x=0, i=1, j, data;
+  var xr = new Array();
+  var w = new Array();
+  s[n][0]=""; w[0]="";
+  while(x&gt;=0){
+    alen = str.length;
+    x = str.indexOf(separator[2],0);
+    if (x==-1) break;
+    w[i]=str.substring(0,x);
+    str = str.substring(x+separator[2].length,alen);
+    i++;
+  }
+  w[i]=str;
+  a[n]=w[1];  // 正解を a[n] にセット
+  data = "&lt;select name=q"  + n + "&gt;&lt;option value=''&gt; ";
+  if (ssort)  w.sort(); else xr = ransu(i);
+  for (j=1;j&lt;=i;j++){
+    if (ssort) k = j; else k = xr[j];
+    data += "&lt;option value='" + w[k] + "'&gt;" + w[k];
+    s[n][j]=w[k];
+  }
+  data += "&lt;\/select&gt;";
+  return data;
+}
+
+// n までの整数をランダムに発生  戻り値 x[]
+function ransu(n) {
+  var k=1, l,  bingo;
+  var x=new Array();
+  x[k] = Math.floor(n * Math.random())+1;
+  k++;
+  while ( k&lt;=n ) {
+    x[k] = Math.floor(n * Math.random())+1;
+    bingo = 0;
+    for (l=1; l&lt;k; l++) {  // すでに同じ数字がないかチェック
+       if ( x[k] == x[l] ) { bingo=1; break; }
+    }
+    if (bingo==0) k++;     // 同じ数字がなければ k++
+  }
+  return x;
+}
+
+// 文字列の長さを返す（日本語を２としてカウント）
+function jstrlen(str) {
+  var len = 0, i;
+  str = escape(str);
+  for (i=0;i&lt;str.length;i++,len++) {
+    if (str.charAt(i) == "%") {
+      if (str.charAt(++i) == "u") {
+        i += 3;
+        len++;
+      }
+      i++;
+    }
+  }
+  return len;
+}
+
+// タグ文字変換 &lt;&gt; → &amp;lt; &amp;gt;
+function tagconv(s){
+  var i, x;
+  for(i in tag0){
+    x = s.indexOf(tag0[i],0);
+    while(x&gt;-1){
+      s = s.substring(0,x) + tag1[i] + s.substring(x+tag0[i].length,s.length);
+      x = s.indexOf(tag0[i],0);
+    }
+  }
+  return s;
+}
+
+// タグ文字変換 &amp;lt; &amp;gt; → &lt;&gt;
+function tagrev(s){
+  var i, x;
+  for(i in tag1){
+    x = s.indexOf(tag1[i],0);
+    while(x&gt;-1){
+      s = s.substring(0,x) + tag0[i] + s.substring(x+tag1[i].length,s.length);
+      x = s.indexOf(tag1[i],0);
+    }
+  }
+  return s;
+}
+
+// 正誤判定ボタンを押した時の処理
+function hantei(m) {
+  var answer="";
+  if (document.f.elements[(m-1)*2].type == "text") { 
+    answer = document.f.elements[(m-1)*2].value;
+  } else {
+    answer = s[m][document.f.elements[(m-1)*2].selectedIndex];
+  }
+  if (answer==a[m]) alert("○ 正解！"); else alert("× 違うよ！");
+}
+
+// 採点し，score を返す
+function scorecheck(){
+  var tmp, data="", seikai=0, mm;
+  answer = new Array();
+  maru = new Array();
+  if (bt_func == "nodisp") mm=1; else mm=2;
+  // 正解数をカウントし，○×判定 maru[]
+  for (i=1;i&lt;=NUM;i++) {
+    if (document.f.elements[(i-1)*mm].type=="text") {
+        answer[i] = document.f.elements[(i-1)*mm].value;
+    } else {
+      answer[i] = s[i][document.f.elements[(i-1)*mm].selectedIndex];
+    }
+    if (answer[i] == a[i]) {
+       maru[i] = true;
+       seikai += 1;
+    } else { maru[i]=false; }
+  }
+  score = Math.floor(100*seikai/NUM + 0.5);
+  return score;
+}
+
+// 採点ボタンを押したときの処理
+function saiten(){
+  score = scorecheck();
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;採点結果&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=pink&gt;&lt;center&gt;";
+  data += "&lt;h3&gt;結　果&lt;\/h3&gt;&lt;form&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt;問&lt;\/th&gt;&lt;th width=120&gt;あなたの解答&lt;\/th&gt;&lt;th&gt;正誤&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;&lt;td nowrap&gt;　" + tagconv(answer[i]) + "&lt;\/td&gt;&lt;th&gt;";
+    data += "&lt;font ";
+    if (maru[i]) data += "color=blue&gt;○"; else data += "color=red&gt;×";
+    data += "&lt;\/font&gt;&lt;\/th&gt;";
+    data += "&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;";
+  data += "&lt;font color=red&gt;&lt;u&gt;&lt;font size=7&gt;" + score + "&lt;\/font&gt;&lt;\/u&gt;&lt;font size=6&gt; 点&lt;\/font&gt;&lt;\/font&gt;&lt;br&gt;";
+  if (!kaito_ctrl &amp;&amp; score &lt; shikii) data += "&lt;small&gt;" + shikii + "点以上で解答が見られます&lt;\/small&gt;&lt;br&gt;";
+  data += "&lt;br&gt;&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+  Win0opened = true;
+  wh = 25*NUM + 230;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=350,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+
+// 解答ボタンを押したときの処理
+function kaito(){
+  var tmpk=null, chk="", data="", c;
+  // 解答しているかどうかチェック
+  if (bt_func == "nodisp") mm=1; else mm=2;
+  for (i=1;i&lt;=NUM;i++) { 
+    tmpk = document.f.elements[(i-1)*mm].value;
+    if (document.f.elements[(i-1)*mm].type=="text") chk += tmpk; else 
+       chk += s[i][document.f.elements[(i-1)*mm].selectedIndex];
+  }
+  if ( chk == "" ) { alert("ちゃんと答えてからね！"); return; }
+  score = scorecheck();
+  if (!kaito_ctrl &amp;&amp; score &lt; shikii) { alert(shikii + "点以上取らないとダメです"); return; }
+
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;解答&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=lavender&gt;&lt;center&gt;";
+  data += "&lt;h3&gt;解答&lt;\/h3&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt; 問 &lt;\/th&gt;&lt;th width=150&gt;解答&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;";
+    if (maru[i]) c="black"; else c="red";
+    data += "&lt;td align=center&gt;&lt;font color=" + c + "&gt;" + tagconv(a[i]) + "&lt;\/font&gt;&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;&lt;br&gt;&lt;form&gt;";
+  data += "&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+
+  Win0opened = true;
+  wh = 25*NUM + 160;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=300,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+// ヒント一覧
+function hintdisp (){
+  var data="";
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;解答&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=lavender&gt;&lt;center&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt; 問 &lt;\/th&gt;&lt;th width=150&gt;ヒント&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;";
+    data += "&lt;td&gt;" + h[i] + "&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;&lt;br&gt;&lt;form&gt;";
+  data += "&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+
+  Win0opened = true;
+  wh = 25*NUM + 140;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=300,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+// Unload したとき
+function winclose(){
+  if (Win0opened &amp;&amp; !Win0.closed) Win0.close();
+}
+
+// --&gt;
+&lt;/script&gt;
+
+&lt;!--&lt;/head&gt;--&gt;
+
+&lt;!--================ 本文はここから ====================--&gt;
+
+&lt;p&gt;&lt;body bgcolor=white text=black onUnload="winclose()"&gt;
+&lt;noscript&gt;
+この WEB問題（穴埋め問題）は JavaScript 1.1で書かれています。&lt;br&gt;
+Netscape Navigator 3.0 以上 または Internet Explorer 4.0 以上でご覧下さい。&lt;br&gt;
+WEB問題作成ツール http://www.fureai.or.jp/~irie/webquiz/ &lt;br&gt;
+&lt;/noscript&gt;&lt;/p&gt;
+&lt;script type="text/javascript" language="JavaScript"&gt;
+&lt;!--
+  document.write(str_body); 
+// --&gt;
+&lt;/script&gt;
+
+&lt;p&gt;&lt;/body&gt;
+&lt;/html&gt;&lt;/p&gt;</content><category term="Elementary"></category><category term="学習指導要領"></category><category term="穴埋め問題"></category></entry><entry><title>社会 小学校学習指導要領（平成２９年告示） 穴埋め問題</title><link href="/E003.html" rel="alternate"></link><published>2020-05-30T00:00:00+09:00</published><updated>2020-05-30T00:00:00+09:00</updated><author><name>aar0429</name></author><id>tag:None,2020-05-30:/E003.html</id><summary type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="ja"&gt;
+&lt;!--&lt;head&gt;--&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS"&gt;
+&lt;!----&gt;
+&lt;title&gt;社会 小学校学習指導要領（平成２９年告示） 穴埋め問題&lt;/title&gt;
+&lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
+&lt;meta http-equiv="Content-Script-Type" content="text/javascript"&gt;
+&lt;style type="text/css"&gt;
+&lt;!--
+body  { background-color:white; color:black}
+table,td,th { font-size:16px; }
+input { font-size:16px; font-family:monospace; vertical-align:middle;}
+input.qn { font-size:12px; font-family:monospace; vertical-align:middle; }
+input.bt { font-size:14px; vertical-align:middle; }
+select  { font-size:16px; font-family:monospace; vertical-align:middle;}
+hr      { color:lavender; height:5px; }
+.honbun { width:600 …&lt;/style&gt;&lt;/meta&gt;&lt;/meta&gt;&lt;/meta&gt;&lt;/html&gt;</summary><content type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="ja"&gt;
+&lt;!--&lt;head&gt;--&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS"&gt;
+&lt;!----&gt;
+&lt;title&gt;社会 小学校学習指導要領（平成２９年告示） 穴埋め問題&lt;/title&gt;
+&lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
+&lt;meta http-equiv="Content-Script-Type" content="text/javascript"&gt;
+&lt;style type="text/css"&gt;
+&lt;!--
+body  { background-color:white; color:black}
+table,td,th { font-size:16px; }
+input { font-size:16px; font-family:monospace; vertical-align:middle;}
+input.qn { font-size:12px; font-family:monospace; vertical-align:middle; }
+input.bt { font-size:14px; vertical-align:middle; }
+select  { font-size:16px; font-family:monospace; vertical-align:middle;}
+hr      { color:lavender; height:5px; }
+.honbun { width:600; font-size:16px; }
+.mondai { width:600; font-size:16px; background-color:; padding:5px; font-family:monospace; }
+h3.ptitle { font-size:150%; font-weight:bold;} 
+.qtop   { font-weight:bold;} 
+.webquiz { font-size:9pt; }
+--&gt;
+&lt;/style&gt;
+
+&lt;script type="text/javascript" language="JavaScript"&gt;
+&lt;!--
+gyoshori = "br";    // 行処理 normal , bunkatu:行分割, br:改行タグ付加, thru:無処理
+shuffle = false;        // 行分割したとき各問いをランダムに入れ替える
+qn_string = "123";  // 問題番号の文字
+bt_func = "seigo";  // 番号ボタンのふるまい
+box_size = "";      // 解答欄のサイズ
+ssort = true;       // 選択肢を昇順に並べかえる
+kaito_ctrl = true;  // 解答ボタンの制限
+hint_btn = false;   // ヒントボタンの有無
+shikii = 50;        // 解答を得るための敷居値
+tag_conv = false;
+bgc1 = "lightcyan";
+bgc2 = "white";
+txtc1 = "black";
+txtc2 = "black";
+pre1 = "";
+pre2 = "";
+Win0opened = false;
+
+a = new Array();
+qn = new Array();
+ptitle = "";
+mondai_top = "以下の文中の空欄を適当な語句でうめて完成させなさい。";
+
+// 問題文 qdata
+var qdata = "　&lt;h2&gt;第１　目標&lt;/h2&gt;\n\n　社会的な見方・考え方を働かせ，｛課題｝を追究したり解決したりする活動を通して，｛グローバル化｝する国際社会に主体的に生きる｛平和｝で民主的な国家及び社会の形成者に必要な｛公民｝としての資質・能力の基礎を次のとおり育成することを目指す。\n\n　(1) 地域や我が国の｛国土｝の地理的環境，｛現代社会｝の仕組みや働き，地域や我が国の｛歴史｝や｛伝統｝と文化を通して社会生活について理解するとともに，様々な資料や調査活動を通して｛情報｝を適切に調べまとめる技能を身に付けるようにする。\n\n　(2) 社会的事象の特色や相互の関連，意味を｛多角的｝に考えたり，社会に見られる課題を把握して，その解決に向けて社会への関わり方を｛選択｝・｛判断｝したりする力，考えたことや選択・判断したことを適切に｛表現｝する力を養う。\n\n　(3) 社会的事象について，よりよい社会を考え｛主体的｝に問題解決しようとする態度を養うとともに，多角的な思考や理解を通して，｛地域社会｝に対する誇りと愛情，地域社会の一員としての自覚，我が国の国土と歴史に対する愛情，我が国の将来を担う｛国民｝としての自覚，世界の国々の人々と共に生きていくことの大切さについての自覚などを養う。\n\n&lt;h2&gt;第2 各学年の目標及び内容&lt;/h2&gt;\n\n&lt;h4&gt;第3学年&lt;/h4&gt;\n\n&lt;em&gt;１ 目 標&lt;/em&gt;\n\n　社会的事象の見方・考え方を働かせ，学習の問題を追究・解決する活動を通して，次のとおり資質・能力を育成することを目指す。\n\n　(1) 身近な地域や市区町村の｛地理的環境｝，地域の｛安全｝を守るための諸活動や地域の産業と消費生活の様子，地域の様子の移り変わりについて，人々の生活との関連を踏まえて理解するとともに，調査活動，｛地図帳｝や各種の具体的資料を通して，必要な情報を調べまとめる｛技能｝を身に付けるようにする。\n\n　(2) 社会的事象の特色や相互の関連，｛意味｝を考える力，社会に見られる課題を把握して，その解決に向けて社会への関わり方を選択・判断する力，考えたことや選択・判断したことを表現する力を養う。\n\n　(3) 社会的事象について，主体的に学習の問題を解決しようとする態度や，よりよい社会を考え学習したことを｛社会生活｝に生かそうとする態度を養うとともに，｛思考｝や理解を通して，｛地域社会｝に対する誇りと愛情，地域社会の一員としての自覚を養う。\n\n&lt;em&gt;２ 内 容&lt;/em&gt;\n\n　(1) 身近な地域や｛市区町村｝（以下第２章第２節において「市」という。）の様子について，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること\n\n　　(ア） 身近な地域や自分たちの市の様子を｛大まか｝に理解すること。\n\n　　(イ） ｛観察｝・調査したり｛地図｝などの資料で調べたりして，｛白地図｝などにまとめること。\n\n　イ 次のような思考力，判断力，表現力等を身に付けること。\n\n　　(ア） 都道府県内における市の｛位置｝，市の｛地形｝や土地利用，交通の広がり，市役所など主な公共施設の場所と働き，古くから残る｛建造物｝の分布などに着目して，身近な地域や市の様子を捉え，｛場所｝による違いを考え，表現すること。\n\n　(2) 地域に見られる｛生産｝や｛販売｝の仕事について，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること\n\n　　(ア） 生産の仕事は，地域の人々の｛生活｝と密接な関わりをもって行われていることを理解すること。\n\n　　(イ） 販売の仕事は，｛消費者｝の多様な願いを踏まえ｛売り上げ｝を高めるよう，工夫して行われていることを理解すること\n\n　　(ウ） ｛見学｝・調査したり地図などの資料で調べたりして，白地図などにまとめること\n\n　イ 次のような思考力，判断力，表現力等を身に付けること\n\n　　(ア） 仕事の種類や｛産地｝の分布，仕事の｛工程｝などに着目して，生産に携わっている人々の仕事の｛様子｝を捉え，地域の人々の生活との関連を考え，表現すること。\n\n　　(イ） 消費者の｛願い｝，販売の仕方，他地域や｛外国｝との関わりなどに着目して，販売に携わっている人々の仕事の様子を捉え，それらの仕事に見られる｛工夫｝を考え，表現すること。\n\n　(3) 地域の｛安全｝を守る働きについて，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　(ア） ｛消防署｝や｛警察署｝などの関係機関は，地域の安全を守るために，相互に連携して｛緊急時｝に対処する体制をとっていることや，関係機関が｛地域｝の人々と協力して火災や事故などの防止に努めていることを理解すること。\n\n　　(イ） 見学・調査したり地図などの資料で調べたりして，｛まとめる｝こと\n\n　イ 次のような思考力，判断力，表現力等を身に付けること\n\n  （ア） 施設・設備などの｛配置｝，緊急時への｛備え｝や対応などに着目して，関係機関や地域の人々の諸活動を捉え，相互の関連や従事する人々の働きを考え，表現すること。\n\n　(4) ｛市の様子｝の移り変わりについて，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　(ア） 市や人々の｛生活｝の様子は，時間の経過に伴い，移り変わってきたことを理解すること。\n\n　　（イ） ｛聞き取り｝調査をしたり地図などの資料で調べたりして，｛年表｝などにまとめること。\n\n　イ 次のような思考力，判断力，表現力等を身に付けること。\n\n　　(ア） 交通や公共施設，｛土地利用｝や人口，｛生活の道具｝などの｛時期｝による違いに着目して，市や人々の生活の様子を捉え，それらの変化を考え，表現すること。\n\n&lt;em&gt;３ 内容の取扱い&lt;/em&gt;\n\n　(1) 内容の(1)については，次のとおり取り扱うものとする。\n\n　ア 学年の｛導入｝で扱うこととし，アの（ア）については，「自分たちの市」に重点を置くよう配慮すること。\n\n　イ アの（イ）については，「白地図などにまとめる」際に，教科用図書「｛地図｝」（以下第２章第２節において「｛地図帳｝」という。）を参照し，｛方位｝や主な地図記号について扱うこと。\n\n　(2) 内容の(2)については，次のとおり取り扱うものとする。\n\n　ア アの（ア）及びイの（ア）については，事例として｛農家｝，｛工場｝などの中から選択して取り上げるようにすること。\n\n　イ アの（イ）及びイの（イ）については，｛商店｝を取り上げ，「他地域や外国との関わり」を扱う際には，地図帳などを使用して都道府県や国の｛名称｝と位置などを調べるようにすること。\n\n　ウ イの（イ）については，我が国や外国には｛国旗｝があることを理解し，それを｛尊重｝する態度を養うよう配慮すること。\n\n　(3) 内容の(3)については，次のとおり取り扱うものとする。\n\n　ア アの（ア）の「緊急時に対処する体制をとっていること」と「防止に努めていること」については，｛火災｝と｛事故｝はいずれも取り上げること。その際，どちらかに重点を置くなど効果的な指導を工夫すること。\n\n　イ イの（ア）については，社会生活を営む上で大切な｛法｝やきまりについて扱うとともに，地域や｛自分自身｝の安全を守るために自分たちにできることなどを考えたり選択・判断したりできるよう配慮すること。\n\n　(4) 内容の(4)については，次のとおり取り扱うものとする。\n\n　ア アの（イ）の「｛年表｝などにまとめる」際には，時期の区分について，昭和，平成など元号を用いた言い表し方などがあることを取り上げること。\n\n　イ イの（ア）の「公共施設」については，市が公共施設の｛整備｝を進めてきたことを取り上げること。その際，｛租税｝の役割に触れること。\n\n　ウ イの（ア）の「人口」を取り上げる際には，少子高齢化，｛国際化｝などに触れ，これからの市の｛発展｝について考えることができるよう配慮すること。\n\n&lt;h4&gt;第4学年&lt;/h4&gt;\n\n&lt;em&gt;１ 目 標&lt;/em&gt;\n\n　社会的事象の見方・考え方を働かせ，学習の問題を追究・解決する活動を通して，次のとおり資質・能力を育成することを目指す。\n\n　(1) 自分たちの都道府県の地理的環境の特色，地域の人々の｛健康｝と生活環境を支える働きや自然災害から地域の安全を守るための諸活動，地域の伝統と文化や地域の発展に尽くした｛先人｝の働きなどについて，人々の生活との関連を踏まえて理解するとともに，｛調査｝活動，地図帳や各種の具体的資料を通して，必要な情報を調べまとめる技能を身に付けるようにする。\n\n　(2) 社会的事象の特色や相互の関連，意味を考える力，社会に見られる課題を把握して，その解決に向けて社会への関わり方を選択・判断する力，考えたことや選択・判断したことを表現する力を養う\n\n　(3) 社会的事象について，主体的に学習の問題を解決しようとする態度や，よりよい社会を考え学習したことを｛社会生活｝に生かそうとする態度を養うとともに，思考や理解を通して，地域社会に対する誇りと愛情，地域社会の一員としての自覚を養う。\n\n&lt;em&gt;２ 内 容&lt;/em&gt;\n\n　(1) ｛都道府県｝（以下第２章第２節において「県」という。）の様子について，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　(ア） 自分たちの県の地理的環境の｛概要｝を理解すること。また，47都道府県の名称と｛位置｝を理解すること。\n\n　　(イ） 地図帳や各種の資料で調べ，｛白地図｝などにまとめること。\n\n　イ 次のような思考力，｛判断力｝，表現力等を身に付けること。\n\n　　(ア） 我が国における自分たちの｛県｝の位置，県全体の地形や主な産業の分布，交通網や主な都市の位置などに着目して，県の様子を捉え，地理的環境の特色を考え，表現すること。\n\n　(2) 人々の健康や生活環境を支える事業について，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　(ア） ｛飲料水｝，電気，｛ガス｝を供給する事業は，安全で｛安定的｝に供給できるよう進められていることや，地域の人々の健康な生活の維持と向上に役立っていることを理解すること。\n\n　　（イ） ｛廃棄物｝を処理する事業は，衛生的な処理や資源の有効利用ができるよう進められていることや，｛生活環境｝の維持と向上に役立っていることを理解すること。\n\n　　(ウ） 見学・調査したり地図などの資料で調べたりして，まとめること\n\n　イ 次のような｛思考力｝，判断力，表現力等を身に付けること。\n\n　　（ア） ｛供給｝の仕組みや経路，県内外の人々の協力などに着目して，飲料水，電気，ガスの供給のための事業の様子を捉え，それらの事業が果たす役割を考え，｛表現｝すること。\n\n　　(イ） 処理の仕組みや｛再利用｝，県内外の人々の協力などに着目して，廃棄物の処理のための事業の様子を捉え，その事業が果たす役割を考え，表現すること。\n\n　(3) ｛自然災害｝から人々を守る活動について，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　(ア） 地域の関係機関や人々は，自然災害に対し，様々な｛協力｝をして対処してきたことや，今後想定される災害に対し，様々な｛備え｝をしていることを理解すること。\n\n　　(イ） 聞き取り調査をしたり地図や｛年表｝などの資料で調べたりして，まとめること。\n\n　イ 次のような思考力，判断力，表現力等を身に付けること。\n\n　　（ア） ｛過去｝に発生した地域の自然災害，関係機関の協力などに着目して，災害から人々を守る｛活動｝を捉え，その働きを考え，表現すること。\n\n　(4) 県内の伝統や｛分化｝，先人の働きについて，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　（ア） 県内の｛文化財｝や｛年中行事｝は，地域の人々が受け継いできたことや，それらには地域の発展など人々の様々な願いが込められていることを理解すること。\n\n　　（イ） 地域の｛発展｝に尽くした先人は，様々な苦心や努力により当時の｛生活｝の向上に貢献したことを理解すること。\n\n　　（ウ） 見学・調査したり地図などの資料で調べたりして，年表などにまとめること。\n\n　イ 次のような思考力，判断力，表現力等を身に付けること。\n\n　　（ア）｛歴史的背景｝や現在に至る経過，保存や｛継承｝のための取組などに着目して，県内の文化財や年中行事の様子を捉え，人々の｛願い｝や努力を考え，表現すること。\n\n　　（イ） 当時の世の中の課題や人々の願いなどに着目して，地域の発展に尽くした先人の｛具体的事例｝を捉え，先人の働きを考え，表現すること。\n\n　(5) 県内の｛特色｝ある地域の様子について，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　（ア） 県内の特色ある地域では，人々が協力し，特色あるまちづくりや｛観光｝などの産業の発展に努めていることを理解すること。\n\n　　（イ） 地図帳や各種の資料で調べ，白地図などにまとめること。\n\n　イ 次のような思考力，判断力，｛表現力｝等を身に付けること。\n\n　　（ア） 特色ある地域の位置や｛自然環境｝，人々の活動や｛産業｝の歴史的背景，人々の｛協力関係｝などに着目して，地域の様子を捉え，それらの特色を考え，｛表現｝すること。\n\n&lt;em&gt;３ 内容の取扱い&lt;/em&gt;\n\n　(1) 内容の(2)については，次のとおり取り扱うものとする。\n\n　　ア アの（ア）及び（イ）については，現在に至るまでに仕組みが計画的に改善され｛公衆衛生｝が向上してきたことに触れること。\n\n　　イ アの（ア）及びイの（ア）については，飲料水，電気，ガスの中から選択して取り上げること。\n\n　　ウ アの（イ）及びイの（イ）については，ごみ，｛下水｝のいずれかを選択して取り上げること。\n\n　　エ イの（ア）については，節水や節電など自分たちにできることを考えたり選択・判断したりできるよう配慮すること。\n\n　　オ イの（イ）については，社会生活を営む上で大切な｛法｝やきまりについて扱うとともに，ごみの減量や水を汚さない工夫など，自分たちにできることを考えたり｛選択｝・判断したりできるよう配慮すること\n\n　(2) 内容の(3)については，次のとおり取り扱うものとする。\n\n　　ア アの（ア）については，地震災害，津波災害，風水害，｛火山災害｝，雪害などの中から，過去に｛県内｝で発生したものを選択して取り上げること。\n\n　　イ アの（ア）及びイの（ア）の「関係機関」については，｛県庁｝や｛市役所｝の働きなどを中心に取り上げ，防災情報の発信，避難体制の確保などの働き，｛自衛隊｝など国の機関との関わりを取り上げること。\n\n　　ウ イの（ア）については，地域で起こり得る災害を想定し，日頃から必要な備えをするなど，自分たちにできることなどを考えたり選択・｛判断｝したりできるよう配慮すること\n\n　(3) 内容の(4)については，次のとおり取り扱うものとする。\n\n　　ア アの（ア）については，県内の主な｛文化財｝や年中行事が大まかに分かるようにするとともに，イの（ア）については，それらの中から具体的事例を取り上げること。\n\n　　イ アの（イ）及びイの（イ）については，開発，教育，医療，文化，産業などの地域の発展に尽くした｛先人｝の中から選択して取り上げること。\n\n　　ウ イの（ア）については，地域の｛伝統｝や文化の保存や継承に関わって，自分たちにできることなどを考えたり選択・判断したりできるよう配慮すること。\n\n　(4) 内容の(5)については，次のとおり取り扱うものとする。\n\n　　ア 県内の特色ある地域が大まかに分かるようにするとともに，伝統的な技術を生かした｛地場産業｝が盛んな地域，｛国際交流｝に取り組んでいる地域及び地域の資源を｛保護｝・活用している地域を取り上げること。その際，地域の資源を保護・活用している地域については，｛自然環境｝，伝統的な文化のいずれかを選択して取り上げること。\n\n　　イ 国際交流に取り組んでいる地域を取り上げる際には，我が国や外国には｛国旗｝があることを理解し，それを尊重する態度を養うよう配慮すること。\n\n&lt;h4&gt;第５学年&lt;/h4&gt;\n\n&lt;em&gt;１ 目 標&lt;/em&gt;\n\n　 社会的事象の見方・考え方を働かせ，学習の問題を追究・解決する活動を通して，次のとおり｛資質｝・能力を育成することを目指す。\n\n　(1) 我が国の国土の地理的環境の特色や産業の現状，社会の｛情報化｝と産業の関わりについて，国民生活との関連を踏まえて理解するとともに，地図帳や｛地球儀｝，統計などの各種の基礎的資料を通して，情報を適切に調べまとめる技能を身に付けるようにする。\n\n　(2) 社会的事象の特色や相互の関連，意味を多角的に考える力，社会に見られる課題を把握して，その解決に向けて社会への関わり方を選択・判断する力，考えたことや選択・判断したことを説明したり，それらを基に｛議論｝したりする力を養う。\n\n　(3) 社会的事象について，主体的に学習の問題を解決しようとする態度や，よりよい社会を考え学習したことを｛社会生活｝に生かそうとする態度を養うとともに，多角的な思考や理解を通して，我が国の国土に対する｛愛情｝，我が国の産業の発展を願い我が国の将来を担う国民としての｛自覚｝を養う。\n\n&lt;em&gt;２ 内 容&lt;/em&gt;\n\n　(1) 我が国の国土の様子と国民生活について，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　（ア） 世界における我が国の国土の位置，国土の｛構成｝，｛領土｝の範囲などを大まかに理解すること。\n\n　　（イ） 我が国の国土の地形や｛気候｝の概要を理解するとともに，人々は自然環境に適応して生活していることを理解すること。\n\n　　（ウ） 地図帳や地球儀，各種の資料で調べ，まとめること。\n\n　イ 次のような思考力，判断力，表現力等を身に付けること。\n\n　　（ア） 世界の｛大陸｝と主な｛海洋｝，主な国の位置，海洋に囲まれ多数の島からなる国土の構成などに着目して，我が国の国土の様子を捉え，その特色を考え，表現すること。\n\n　　（イ） 地形や気候などに着目して，国土の自然などの様子や｛自然条件｝から見て特色ある地域の人々の生活を捉え，国土の自然環境の特色やそれらと国民生活との関連を考え，表現すること。\n\n　(2) 我が国の農業や水産業における｛食料生産｝について，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　（ア） 我が国の食料生産は，自然条件を生かして営まれていることや，国民の食料を確保する重要な役割を果たしていることを理解すること。\n\n　　（イ） 食料生産に関わる人々は，｛生産性｝や｛品質｝を高めるよう努力したり｛輸送方法｝や販売方法を工夫したりして，良質な食料を｛消費地｝に届けるなど，食料生産を支えていることを理解すること。\n\n　　（ウ） 地図帳や地球儀，各種の資料で調べ，まとめること。\n\n　イ 次のような｛思考力｝，判断力，表現力等を身に付けること。\n\n　　（ア） 生産物の種類や｛分布｝，生産量の変化，輸入など外国との関わりなどに着目して，食料生産の概要を捉え，食料生産が国民生活に果たす役割を考え，表現すること。\n\n　　（イ） 生産の｛工程｝，人々の協力関係，技術の向上，輸送，価格や費用などに着目して，食料生産に関わる人々の工夫や努力を捉え，その働きを考え，表現すること。\n\n　(3) 我が国の工業生産について，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　（ア） 我が国では様々な工業生産が行われていることや，国土には工業の盛んな｛地域｝が広がっていること及び工業製品は国民生活の向上に重要な役割を果たしていることを理解すること。\n\n　　（イ） 工業生産に関わる人々は，消費者の｛需要｝や社会の｛変化｝に対応し，優れた製品を生産するよう様々な工夫や努力をして，工業生産を支えていることを理解すること。\n\n　　（ウ） ｛防疫｝や運輸は，原材料の確保や製品の販売などにおいて，工業生産を支える重要な役割を果たしていることを理解すること。\n\n　　（エ） 地図帳や地球儀，各種の資料で調べ，まとめること。\n\n　イ 次のような思考力，判断力，表現力等を身に付けること。\n\n　　（ア） 工業の種類，工業の盛んな地域の分布，工業製品の｛改良｝などに着目して，工業生産の概要を捉え，工業生産が国民生活に果たす役割を考え，表現すること。\n\n　　（イ） 製造の工程，工場相互の協力関係，優れた技術などに着目して，工業生産に関わる人々の工夫や努力を捉え，その働きを考え，表現すること。\n\n　　（ウ） ｛交通網｝の広がり，｛外国｝との関わりなどに着目して，貿易や｛運輸｝の様子を捉え，それらの役割を考え，表現すること。\n\n　(4) 我が国の産業と情報との関わりについて，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　（ア） 放送，｛新聞｝などの産業は，国民生活に大きな影響を及ぼしていることを理解すること。\n\n　　（イ） 大量の情報や情報通信技術の活用は，様々な産業を発展させ，国民生活を向上させていることを理解すること。\n\n　　（ウ） 聞き取り調査をしたり｛映像｝や新聞などの各種資料で調べたりして，まとめること。\n\n　イ 次のような思考力，判断力，表現力等を身に付けること。\n\n　　（ア） 情報を集め発信するまでの工夫や努力などに着目して，｛放送｝，新聞などの産業の様子を捉え，それらの産業が国民生活に果たす役割を考え，表現すること。\n\n　　（イ） 情報の種類，情報の活用の仕方などに着目して，産業における情報活用の現状を捉え，情報を生かして発展する産業が国民生活に果たす役割を考え，表現すること。\n\n　(5) 我が国の国土の自然環境と国民生活との関連について，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　（ア） ｛自然災害｝は国土の自然条件などと関連して発生していることや，自然災害から国土を保全し国民生活を守るために国や県などが様々な対策や事業を進めていることを理解すること。\n\n　　（イ） ｛森林｝は，その育成や保護に従事している人々の様々な工夫と努力により国土の保全など重要な役割を果たしていることを理解すること。\n\n　　（ウ） 関係機関や地域の人々の様々な努力により｛公害｝の防止や生活環境の改善が図られてきたことを理解するとともに，公害から国土の環境や国民の｛健康｝な生活を守ることの大切さを理解すること。\n\n　　（エ） 地図帳や各種の資料で調べ，まとめること。\n\n　イ 次のような思考力，判断力，表現力等を身に付けること。\n\n　　（ア） 災害の種類や発生の位置や｛時期｝，防災対策などに着目して，国土の自然災害の状況を捉え，自然条件との関連を考え，表現すること。\n\n　　（イ） 森林資源の分布や働きなどに着目して，国土の環境を捉え，森林資源が果たす役割を考え，表現すること。\n\n　　（ウ） 公害の発生時期や｛経過｝，人々の協力や努力などに着目して，公害防止の取組を捉え，その働きを考え，表現すること。\n\n&lt;em&gt;３ 内容の取扱い&lt;/em&gt;\n\n　(1) 内容の(1)については，次のとおり取り扱うものとする。\n\n　ア アの（ア）の「領土の範囲」については，｛竹島｝や北方領土，｛尖閣諸島｝が我が国の固有の領土であることに触れること。\n\n　イ アの（ウ）については，地図帳や地球儀を用いて，方位，｛緯度｝や｛経度｝などによる位置の表し方について取り扱うこと。\n\n　ウ イの（ア）の「主な国」については，名称についても扱うようにし，近隣の諸国を含めて取り上げること。その際，我が国や諸外国には｛国旗｝があることを理解し，それを｛尊重｝する態度を養うよう配慮すること。\n\n　エ イの（イ）の「自然条件から見て特色ある地域」については，｛地形条件｝や気候条件から見て特色ある地域を取り上げること。\n\n　(2) 内容の(2)については，次のとおり取り扱うものとする。\n\n　ア アの（イ）及びイの（イ）については，食料生産の盛んな地域の具体的事例を通して調べることとし，｛稲作｝のほか，野菜，果物，畜産物，水産物などの中から一つを取り上げること。\n\n　イ イの（ア）及び（イ）については，消費者や生産者の立場などから多角的に考えて，これからの農業などの発展について，自分の考えをまとめることができるよう配慮すること。\n\n　(3) 内容の(3)については，次のとおり取り扱うものとする。\n\n　ア アの（イ）及びイの（イ）については，工業の盛んな地域の具体的事例を通して調べることとし，金属工業，機械工業，｛化学工業｝，｛食料品工業｝などの中から一つを取り上げること。\n\n　イ イの（ア）及び（イ）については，消費者や生産者の立場などから多角的に考えて，これからの工業の発展について，自分の考えをまとめることができるよう配慮すること。\n\n　(4) 内容の(4)については，次のとおり取り扱うものとする。\n\n　ア アの（ア）の「放送，新聞などの産業」については，それらの中から選択して取り上げること。その際，情報を有効に活用することについて，情報の送り手と受け手の立場から多角的に考え，受け手として正しく判断することや送り手として責任をもつことが大切であることに気付くようにすること。\n\n　イ アの（イ）及びイの（イ）については，情報や情報技術を活用して発展している販売，運輸，｛観光｝，医療，｛福祉｝などに関わる産業の中から選択して取り上げること。その際，産業と国民の立場から多角的に考えて，｛情報化｝の進展に伴う産業の発展や国民生活の向上について，自分の考えをまとめることができるよう配慮すること。\n\n　(5) 内容の(5)については，次のとおり取り扱うものとする。\n\n　ア アの（ア）については，地震災害，津波災害，｛風水害｝，火山災害，雪害などを取り上げること。\n\n　イ アの（ウ）及びイの（ウ）については，大気の汚染，水質の｛汚濁｝などの中から具体的事例を選択して取り上げること。\n\n　ウ イの（イ）及び（ウ）については，国土の環境保全について，自分たちにできることなどを考えたり選択・判断したりできるよう配慮すること。\n\n&lt;h4&gt;第6学年&lt;/h4&gt;\n\n&lt;em&gt;１ 目 標&lt;/em&gt;\n\n　社会的事象の見方・考え方を働かせ，学習の問題を追究・解決する活動を通して，次のとおり資質・能力を育成することを目指す。\n\n　(1) 我が国の政治の考え方と仕組みや働き，｛国家｝及び社会の発展に大きな働きをした先人の業績や優れた｛文化遺産｝，我が国と関係の深い国の生活や｛グローバル化｝する国際社会における我が国の役割について理解するとともに，地図帳や地球儀，｛統計｝や｛年表｝などの各種の基礎的資料を通して，情報を適切に調べまとめる技能を身に付けるようにする。\n\n　(2) 社会的事象の特色や相互の関連，意味を多角的に考える力，社会に見られる課題を把握して，その解決に向けて社会への関わり方を選択・判断する力，考えたことや選択・判断したことを｛説明｝したり，それらを基に議論したりする力を養う。\n\n　(3) 社会的事象について，主体的に学習の問題を解決しようとする態度や，よりよい社会を考え学習したことを社会生活に生かそうとする態度を養うとともに，多角的な思考や理解を通して，我が国の｛歴史｝や伝統を大切にして国を愛する心情，我が国の将来を担う国民としての自覚や｛平和｝を願う日本人として世界の国々の人々と共に生きることの大切さについての自覚を養う。\n\n&lt;em&gt;２ 内 容&lt;/em&gt;\n\n　(1) 我が国の｛政治｝の働きについて，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　（ア） ｛日本国憲法｝は国家の理想，｛天皇｝の地位，国民としての｛権利｝及び｛義務｝など国家や国民生活の基本を定めていることや，現在の我が国の｛民主｝政治は日本国憲法の基本的な考え方に基づいていることを理解するとともに，｛立法｝，｛行政｝，｛司法｝の三権がそれぞれの役割を果たしていることを理解すること。\n\n　　（イ） 国や地方公共団体の政治は，｛国民｝主権の考え方の下，国民生活の安定と向上を図る大切な働きをしていることを理解すること。\n\n　　（ウ） 見学・調査したり各種の資料で調べたりして，まとめること。\n\n　イ 次のような思考力，判断力，表現力等を身に付けること。\n\n　　（ア） 日本国憲法の基本的な考え方に着目して，我が国の民主政治を捉え，日本国憲法が国民生活に果たす役割や，｛国会｝，｛内閣｝，｛裁判所｝と国民との関わりを考え，表現すること。\n\n　　（イ） 政策の内容や計画から実施までの過程，法令や｛予算｝との関わりなどに着目して，国や地方公共団体の政治の取組を捉え，国民生活における政治の働きを考え，表現すること。\n\n　(2) 我が国の｛歴史上｝の主な事象について，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　　ア 次のような知識及び技能を身に付けること。その際，我が国の歴史上の主な事象を手掛かりに，｛大まかな｝歴史を理解するとともに，関連する先人の業績，優れた文化遺産を理解すること。\n\n　　（ア） ｛狩猟｝・採集や農耕の生活，｛古墳｝，大和朝廷（大和政権）による統一の様子を手掛かりに，｛むら｝からくにへと変化したことを理解すること。その際，神話・｛伝承｝を手掛かりに，国の形成に関する考え方などに関心をもつこと。\n\n　　（イ） ｛大陸分化｝の摂取，大化の｛改新｝，大仏造営の様子を手掛かりに，｛天皇｝を中心とした政治が確立されたことを理解すること。\n\n　　（ウ） ｛貴族｝の生活や文化を手掛かりに，日本風の文化が生まれたことを理解すること。\n\n　　（エ） ｛源平｝の戦い，鎌倉幕府の始まり，｛元｝との戦いを手掛かりに，｛武士｝による政治が始まったことを理解すること。\n\n　　（オ） ｛京都｝の室町に幕府が置かれた頃の代表的な｛建造物｝や絵画を手掛かりに，今日の生活文化につながる｛室町｝文化が生まれたことを理解すること。\n\n　　（カ） キリスト教の伝来，織田・豊臣の｛天下統一｝を手掛かりに，戦国の世が統一されたことを理解すること。\n\n　　（キ） 江戸幕府の始まり，｛参勤交代｝や鎖国などの幕府の政策，｛身分制｝を手掛かりに，武士による政治が安定したことを理解すること。\n\n　　（ク） ｛歌舞伎｝や浮世絵，｛国学｝や蘭らん学がくを手掛かりに，｛町人｝の文化が栄え新しい学問がおこったことを理解すること。\n\n　　（ケ） 黒船の来航，｛廃藩置県｝や四民平等などの改革，｛文明開化｝などを手掛かりに，我が国が｛明治維新｝を機に欧米の文化を取り入れつつ近代化を進めたことを理解すること。\n\n　　（コ） ｛大日本帝国憲法｝の発布，日清・日露の戦争，条約改正，｛科学｝の発展などを手掛かりに，我が国の国力が充実し国際的地位が向上したことを理解すること。\n\n　　（サ） ｛日中｝戦争や我が国に関わる第二次世界大戦，日本国憲法の制定，オリンピック・パラリンピックの開催などを手掛かりに，戦後我が国は｛民主｝的な国家として出発し，国民生活が向上し，国際社会の中で重要な役割を果たしてきたことを理解すること。\n\n　　（シ） ｛遺跡｝や文化財，地図や年表などの資料で調べ，まとめること。\n\n　イ 次のような思考力，判断力，表現力等を身に付けること。\n\n　　（ア） 世の中の様子，人物の働きや代表的な文化遺産などに着目して，我が国の歴史上の主な事象を捉え，我が国の歴史の展開を考えるとともに，歴史を学ぶ意味を考え，表現すること。\n\n　(3) グローバル化する世界と日本の役割について，学習の問題を追究・解決する活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のような知識及び技能を身に付けること。\n\n　　（ア） 我が国と｛経済｝や文化などの面でつながりが深い国の人々の生活は，多様であることを理解するとともに，スポーツや文化などを通して他国と交流し，異なる文化や習慣を尊重し合うことが大切であることを理解すること。\n\n　　（イ） 我が国は，｛平和｝な世界の実現のために｛国際連合｝の一員として重要な役割を果たしたり，諸外国の発展のために援助や協力を行ったりしていることを理解すること。\n\n　　（ウ） 地図帳や地球儀，各種の資料で調べ，まとめること。\n\n　イ 次のような思考力，判断力，表現力等を身に付けること。\n\n　　（ア） ｛外国｝の人々の生活の様子などに着目して，日本の文化や｛習慣｝との違いを捉え，国際交流の果たす役割を考え，表現すること。\n\n　　（イ） 地球規模で発生している課題の解決に向けた連携・協力などに着目して，国際連合の働きや我が国の国際協力の様子を捉え，国際社会において我が国が果たしている役割を考え，表現すること。\n\n&lt;em&gt;３ 内容の取扱い&lt;/em&gt;\n\n　(1) 内容の(1)については，次のとおり取り扱うものとする。\n\n　ア アの（ア）については，国会などの｛議会｝政治や選挙の意味，国会と内閣と裁判所の｛三権｝相互の関連，｛裁判員｝制度や｛租税｝の役割などについて扱うこと。その際，イの（ア）に関わって，国民としての政治への関わり方について多角的に考えて，自分の考えをまとめることができるよう配慮すること。\n\n　イ アの（ア）の「天皇の地位」については，｛日本国憲法｝に定める天皇の国事に関する行為など児童に理解しやすい事項を取り上げ，歴史に関する学習との関連も図りながら，天皇についての理解と敬愛の念を深めるようにすること。また，「国民としての権利及び義務」については，｛参政｝権，｛納税｝の義務などを取り上げること。\n\n　ウ アの（イ）の「国や地方公共団体の政治」については，｛社会保障｝，自然災害からの復旧や復興，地域の開発や活性化などの取組の中から選択して取り上げること。\n\n　エ イの（ア）の「国会」について，国民との関わりを指導する際には，各々の国民の｛祝日｝に関心をもち，我が国の社会や文化における意義を考えることができるよう配慮すること。\n\n　(2) 内容の(2)については，次のとおり取り扱うものとする。\n\n　ア アの（ア）から（サ）までについては，児童の興味・関心を重視し，取り上げる人物や文化遺産の重点の置き方に工夫を加えるなど，精選して具体的に理解できるようにすること。その際，アの（サ）の指導に当たっては，児童の｛発達｝の段階を考慮すること。\n\n　イ アの（ア）から（サ）までについては，例えば，｛国宝｝，重要文化財に指定されているものや，｛世界文化遺産｝に登録されているものなどを取り上げ，我が国の代表的な文化遺産を通して学習できるように配慮すること。\n\n　ウ アの（ア）から（コ）までについては，例えば，次に掲げる人物を取り上げ，人物の働きを通して学習できるよう指導すること。\n\n｛卑弥｝呼，｛聖徳｝太子，小野｛妹子｝，｛中大｝兄皇子，中臣｛鎌足｝，｛聖武｝天皇，｛行｝基，｛鑑｝真，藤原｛道長｝，｛紫式｝部，清少｛納言｝，平｛清盛｝， 源｛頼朝｝， 源｛義経｝，北条｛時宗｝，足利｛義満｝，足利｛義政｝，｛雪｝舟，ザ｛ビエル｝，織田｛信長｝，｛豊臣｝秀吉，徳川｛家康｝，徳川｛家光｝，近松｛門左衛門｝，歌川｛広重｝，本居｛宣長｝，｛杉田｝玄白，伊能｛忠敬｝，｛ペ｝リー，勝｛海舟｝，西郷｛隆盛｝，大久保｛利通｝，木戸｛孝允｝，｛明治｝天皇，福沢｛諭吉｝，大隈｛重信｝，｛板垣｝退助，伊藤｛博文｝，｛陸奥｝宗光，東郷｛平八郎｝，小村｛寿太郎｝，野口｛英世｝\n\n　エ アの（ア）の「神話・伝承」については，｛古事記｝，｛日本書紀｝，｛風土記｝などの中から適切なものを取り上げること。\n\n　オ アの（イ）から（サ）までについては，当時の世界との関わりにも目を向け，我が国の歴史を広い視野から捉えられるよう配慮すること。\n\n　カ アの（シ）については，年表や絵画など資料の特性に留意した読み取り方についても指導すること。\n\n　キ イの（ア）については，歴史学習全体を通して，我が国は長い歴史をもち伝統や文化を育んできたこと，我が国の歴史は政治の｛中心地｝や世の中の様子などによって幾つかの｛時期｝に分けられることに気付くようにするとともに，現在の自分たちの生活と過去の出来事との関わりを考えたり，過去の出来事を基に現在及び将来の｛発展｝を考えたりするなど，歴史を学ぶ｛意味｝を考えるようにすること。\n\n　(3) 内容の(3)については，次のとおり取り扱うものとする。\n\n　ア アについては，我が国の国旗と国歌の意義を理解し，これを尊重する態度を養うとともに，諸外国の国旗と｛国歌｝も同様に尊重する態度を養うよう配慮すること。\n\n　イ アの（ア）については，我が国とつながりが深い国から数か国を取り上げること。その際，児童が｛１｝か国を選択して調べるよう配慮すること。\n\n　ウ アの（ア）については，我が国や諸外国の伝統や文化を尊重しようとする態度を養うよう配慮すること。\n\n　エ イについては，世界の人々と共に生きていくために大切なことや，今後，我が国が国際社会において果たすべき役割などを多角的に考えたり選択・判断したりできるよう配慮すること。\n\n　オ イの（イ）については，網羅的，抽象的な扱いを避けるため，「国際連合の働き」については，｛ユニセフ｝やユネスコの身近な活動を取り上げること。また，「我が国の国際協力の様子」については，教育，医療，農業などの分野で世界に貢献している事例の中から選択して取り上げること。\n\n&lt;h2&gt;第3　指導計画の作成と内容の取り扱い&lt;/h2&gt;\n\n１ 指導計画の作成に当たっては，次の事項に配慮するものとする。\n\n　(1) 単元など内容や時間のまとまりを見通して，その中で育む資質・能力の育成に向けて，児童の主体的・対話的で深い学びの実現を図るようにすること。その際，問題解決への見通しをもつこと，社会的事象の見方・考え方を働かせ，事象の特色や意味などを考え概念などに関する知識を獲得すること，学習の過程や成果を振り返り学んだことを活用することなど，学習の問題を追究・解決する活動の充実を図ること。\n\n　(2) 各学年の目標や内容を踏まえて，事例の取り上げ方を工夫して，内容の配列や授業時数の配分などに留意して効果的な年間指導計画を作成すること。\n\n　(3) 我が国の 47 都道府県の名称と位置，世界の大陸と主な海洋の名称と位置については，学習内容と関連付けながら，その都度，地図帳や地球儀などを使って確認するなどして，小学校卒業までに身に付け活用できるように工夫して指導すること。\n\n　(4) 障害のある児童などについては，学習活動を行う場合に生じる｛困難さ｝に応じた指導内容や指導方法の工夫を計画的，組織的に行うこと。\n\n　(5) 第１章総則の第１の２の(2)に示す道徳教育の目標に基づき，｛道徳科｝などとの関連を考慮しながら，第３章特別の教科道徳の第２に示す内容について，社会科の特質に応じて適切な指導をすること。\n\n２ 第２の内容の取扱いについては，次の事項に配慮するものとする。\n\n　(1) 各学校においては，地域の実態を生かし，児童が興味・関心をもって学習に取り組めるようにするとともに，｛観察｝や見学，聞き取りなどの調査活動を含む具体的な体験を伴う学習やそれに基づく表現活動の一層の充実を図ること。また，社会的事象の特色や意味，社会に見られる課題などについて，多角的に考えたことや選択・判断したことを論理的に説明したり，立場や｛根拠｝を明確にして｛議論｝したりするなど言語活動に関わる学習を一層重視すること。\n\n　(2) 学校図書館や公共図書館，｛コンピューター｝などを活用して，情報の収集や第３ 指導計画の作成と内容の取扱い，まとめなどを行うようにすること。また，全ての学年において，｛地図帳｝を活用すること。\n\n　(3) 博物館や資料館などの施設の活用を図るとともに，身近な地域及び国土の｛遺跡｝や文化財などについての調査活動を取り入れるようにすること。また，内容に関わる専門家や関係者，関係の諸機関との連携を図るようにすること。\n\n　(4) 児童の発達の段階を考慮し，社会的事象については，児童の考えが深まるよう様々な見解を提示するよう配慮し，多様な見解のある事柄，未確定な事柄を取り上げる場合には，｛有益適切｝な教材に基づいて指導するとともに，特定の事柄を強調し過ぎたり，一面的な見解を十分な配慮なく取り上げたりするなどの偏った取扱いにより，児童が多角的に考えたり，事実を客観的に捉え，公正に判断したりすることを妨げることのないよう留意すること。";
+// === end of qdata
+
+// ヒント hint
+var hintdata = "";
+// === end of hintdata
+
+h = new Array();
+if (hint_btn || bt_func =="hint") h = makehint(hintdata);
+
+separator = new Array("｛","｝","｜");
+tag0 = new Array("&lt;","&gt;");
+tag1 = new Array("&amp;lt;","&amp;gt;");
+
+if (gyoshori=="normal" || gyoshori=="bunkatu") question = rowsplit(qdata);
+if (gyoshori=="br") question = plusbr(qdata);
+if (gyoshori=="thru") question = qdata;
+
+// 問題番号文字列をセット NUM:空欄の数 文字不足時は数字にセット
+var x=0, NUM=0, qnlen;
+while(x&gt;=0){
+  x=question.indexOf(separator[0],x);
+  if (x==-1) break;
+  x++; NUM++;
+}
+qnlen = qn_string.length;
+var qns = qn_string.substring(0,1), qnn;
+if (qns=="1" || qns=="a" || qns=="A") qnn=1; else qnn="あ".length;
+for(i=1;i&lt;=qnlen;i++) { qn[i]=qn_string.substring((i-1)*qnn,i*qnn);}
+if (qnlen&lt;NUM) for(i=1;i&lt;=NUM;i++) { qn[i]=i; }
+
+s = new Array();
+for (i=0;i&lt;=NUM;i++) s[i] = new Array();  // select form value 配列
+
+// 問題文中から穴埋め箇所と解答を抽出し，Form TAG に置き換え
+var x0=0, x1=0, x2=0, i=1, ql, str="", bx_size;
+while(x1&gt;=0){
+  ql=question.length;
+  x1 = question.indexOf(separator[0],x0);
+  if (x1==-1) break;
+  x2 = question.indexOf(separator[1],x0);
+  a[i] = question.substring(x1+separator[0].length, x2);
+  if (tag_conv) a[i]=tagrev(a[i]);
+  str = question.substring(0,x1);
+  if (a[i].indexOf(separator[2],0)==-1){
+    if (box_size=="") bx_size=jstrlen(a[i]); else bx_size=box_size;
+    str += "&lt;input name=q" + i + " size=" + bx_size + "&gt;";
+  } else {
+    str += fselect(a[i],i);
+  }
+  if (bt_func != "nodisp") str += "&lt;input type=button value='" + qn[i] + "' class=qn";
+  if (bt_func == "seigo") str += " onClick='hantei(" + i + ")'&gt;";
+  if (bt_func == "hint") str += " onClick='alert(\"" + h[i] + "\")'&gt;";
+  if (bt_func == "none") str += "&gt;";
+  x0 = str.length;
+  question = str + question.substring(x2+separator[1].length,ql);
+  i++;
+}
+
+var str_body = "&lt;div class=honbun&gt;&lt;form name=f&gt;";
+str_body += "&lt;h3 class=ptitle&gt;" + ptitle + "&lt;\/h3&gt;";
+str_body += "&lt;b class=qtop&gt;" + mondai_top + "&lt;\/b&gt;";
+str_body += "&lt;hr width=600&gt;&lt;div class=mondai&gt;" + question + "&lt;\/div&gt;&lt;hr width=600&gt;";
+str_body += "&lt;table width=600&gt;&lt;tr&gt;&lt;td&gt;";
+str_body += "&lt;div align=center&gt;&lt;input type=button value='採点' onClick='saiten();' class=bt&gt;　&lt;input type=reset value='リセット' class=bt&gt;";
+str_body += "　&lt;input type=button value='解答' onClick='kaito();' class=bt&gt;";
+if (hint_btn) str_body += "　&lt;input type=button value='ヒント' onClick='hintdisp();' class=bt&gt;";
+
+str_body += "&lt;\/td&gt;&lt;\/tr&gt;&lt;\/table&gt;&lt;\/form&gt;&lt;\/div&gt;";
+
+
+// ------------ サブルーチン -------------
+
+// ヒント配列 h[] の作成
+function makehint(data) {
+  str = data.split("\n");
+  h = new Array();
+  j=1;
+  for (i in str){
+    if (str[i] != "") {
+      h[j] = str[i];
+      j++;
+    }
+  }
+  return h; 
+}
+
+// データを空行で分割
+function qconv(data){
+  str = data.split("\n");
+  var j=1;
+  q[j]="";
+  for (i in str) {
+    if (str[i] != "") {
+       q[j] += str[i] + "&lt;br&gt;";
+    } else if (i&gt;0) {
+       if (str[i-1] != "") j++;
+       q[j]="";
+    }
+  }
+  return j-1;
+}
+
+// データを行単位で分割
+function qconv2(data){
+  str = data.split("\n");
+  j=1;
+  for (i in str) {
+    if (str[i] != "") { q[j]=str[i]; j++; }
+  }
+  return j-1;
+}
+
+// データを行, 空行で分割し，行末に改行タグを挿入。shuffleの場合はランダム化
+function rowsplit(data){
+  str = data.split("\n");
+  q = new Array();
+  x = new Array();
+  hintm = new Array();
+
+  if (gyoshori=="normal") j = qconv(data);
+  if (gyoshori=="bunkatu") j = qconv2(data);
+
+  // ヒントを２次元配列 hintm[][] に格納
+  for (i=0;i&lt;=j;i++) hintm[i] = new Array();
+  var xx=0, m=0, n;  // m:何問目
+  for (i=1;i&lt;=j;i++){
+     xx=0; n=0;
+     while(xx&gt;=0){
+       xx=q[i].indexOf(separator[0],xx);
+       if (xx==-1) break;
+       xx++; m++; n++;
+       hintm[i][n] = h[m];  // i問目のn番目のヒント
+     }
+  }
+
+  x = ransu(j);
+  var ss = "&lt;table width=600 border=0 cellpadding=5 cellspacing=0&gt;";
+  m=0;
+  for (i=1;i&lt;=j;i++){
+    if (shuffle) {
+        k=x[i];
+        // ヒント配列組み直し
+        xx=0; n=0;
+        while(xx&gt;=0){
+          xx=q[k].indexOf(separator[0],xx);
+          if (xx==-1) break;
+          xx++; m++; n++;
+          h[m] = hintm[k][n];  // k問目のn番目のヒント
+        }
+    } else k=i;
+    if (i % 2 == 1) { bgc=bgc1; txtc=txtc1;} else { bgc=bgc2; txtc=txtc2; }
+    ss += "&lt;tr&gt;&lt;td bgcolor=" + bgc + " valign=top width=36&gt;";
+    ss += "&lt;table border=2 cellspacing=0&gt;&lt;tr&gt;&lt;th width=24 height=24 bgcolor=pink&gt;&lt;font color=black&gt;" + i + "&lt;\/font&gt;&lt;\/th&gt;&lt;\/tr&gt;&lt;\/table&gt;&lt;\/td&gt;";
+    ss += "&lt;td bgcolor=" + bgc + " width=564&gt;&lt;font color=" + txtc + "&gt;"+ pre1 + q[k] + pre2 + "&lt;\/font&gt;&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  ss += "&lt;\/table&gt;";
+  return ss;
+}
+
+// データはそのままに，各行の最後に &lt;br&gt;を挿入
+function plusbr(data){
+  str = data.split("\n");
+  var ss="";
+  for (i in str) ss += str[i] + "&lt;br&gt;";
+  return ss;
+}
+
+// 文字列からセパレータ｜を探し，選択肢を抽出。select form 作成
+function fselect(str,n) {
+  var x=0, i=1, j, data;
+  var xr = new Array();
+  var w = new Array();
+  s[n][0]=""; w[0]="";
+  while(x&gt;=0){
+    alen = str.length;
+    x = str.indexOf(separator[2],0);
+    if (x==-1) break;
+    w[i]=str.substring(0,x);
+    str = str.substring(x+separator[2].length,alen);
+    i++;
+  }
+  w[i]=str;
+  a[n]=w[1];  // 正解を a[n] にセット
+  data = "&lt;select name=q"  + n + "&gt;&lt;option value=''&gt; ";
+  if (ssort)  w.sort(); else xr = ransu(i);
+  for (j=1;j&lt;=i;j++){
+    if (ssort) k = j; else k = xr[j];
+    data += "&lt;option value='" + w[k] + "'&gt;" + w[k];
+    s[n][j]=w[k];
+  }
+  data += "&lt;\/select&gt;";
+  return data;
+}
+
+// n までの整数をランダムに発生  戻り値 x[]
+function ransu(n) {
+  var k=1, l,  bingo;
+  var x=new Array();
+  x[k] = Math.floor(n * Math.random())+1;
+  k++;
+  while ( k&lt;=n ) {
+    x[k] = Math.floor(n * Math.random())+1;
+    bingo = 0;
+    for (l=1; l&lt;k; l++) {  // すでに同じ数字がないかチェック
+       if ( x[k] == x[l] ) { bingo=1; break; }
+    }
+    if (bingo==0) k++;     // 同じ数字がなければ k++
+  }
+  return x;
+}
+
+// 文字列の長さを返す（日本語を２としてカウント）
+function jstrlen(str) {
+  var len = 0, i;
+  str = escape(str);
+  for (i=0;i&lt;str.length;i++,len++) {
+    if (str.charAt(i) == "%") {
+      if (str.charAt(++i) == "u") {
+        i += 3;
+        len++;
+      }
+      i++;
+    }
+  }
+  return len;
+}
+
+// タグ文字変換 &lt;&gt; → &amp;lt; &amp;gt;
+function tagconv(s){
+  var i, x;
+  for(i in tag0){
+    x = s.indexOf(tag0[i],0);
+    while(x&gt;-1){
+      s = s.substring(0,x) + tag1[i] + s.substring(x+tag0[i].length,s.length);
+      x = s.indexOf(tag0[i],0);
+    }
+  }
+  return s;
+}
+
+// タグ文字変換 &amp;lt; &amp;gt; → &lt;&gt;
+function tagrev(s){
+  var i, x;
+  for(i in tag1){
+    x = s.indexOf(tag1[i],0);
+    while(x&gt;-1){
+      s = s.substring(0,x) + tag0[i] + s.substring(x+tag1[i].length,s.length);
+      x = s.indexOf(tag1[i],0);
+    }
+  }
+  return s;
+}
+
+// 正誤判定ボタンを押した時の処理
+function hantei(m) {
+  var answer="";
+  if (document.f.elements[(m-1)*2].type == "text") { 
+    answer = document.f.elements[(m-1)*2].value;
+  } else {
+    answer = s[m][document.f.elements[(m-1)*2].selectedIndex];
+  }
+  if (answer==a[m]) alert("○ 正解！"); else alert("× 違うよ！");
+}
+
+// 採点し，score を返す
+function scorecheck(){
+  var tmp, data="", seikai=0, mm;
+  answer = new Array();
+  maru = new Array();
+  if (bt_func == "nodisp") mm=1; else mm=2;
+  // 正解数をカウントし，○×判定 maru[]
+  for (i=1;i&lt;=NUM;i++) {
+    if (document.f.elements[(i-1)*mm].type=="text") {
+        answer[i] = document.f.elements[(i-1)*mm].value;
+    } else {
+      answer[i] = s[i][document.f.elements[(i-1)*mm].selectedIndex];
+    }
+    if (answer[i] == a[i]) {
+       maru[i] = true;
+       seikai += 1;
+    } else { maru[i]=false; }
+  }
+  score = Math.floor(100*seikai/NUM + 0.5);
+  return score;
+}
+
+// 採点ボタンを押したときの処理
+function saiten(){
+  score = scorecheck();
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;採点結果&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=pink&gt;&lt;center&gt;";
+  data += "&lt;h3&gt;結　果&lt;\/h3&gt;&lt;form&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt;問&lt;\/th&gt;&lt;th width=120&gt;あなたの解答&lt;\/th&gt;&lt;th&gt;正誤&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;&lt;td nowrap&gt;　" + tagconv(answer[i]) + "&lt;\/td&gt;&lt;th&gt;";
+    data += "&lt;font ";
+    if (maru[i]) data += "color=blue&gt;○"; else data += "color=red&gt;×";
+    data += "&lt;\/font&gt;&lt;\/th&gt;";
+    data += "&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;";
+  data += "&lt;font color=red&gt;&lt;u&gt;&lt;font size=7&gt;" + score + "&lt;\/font&gt;&lt;\/u&gt;&lt;font size=6&gt; 点&lt;\/font&gt;&lt;\/font&gt;&lt;br&gt;";
+  if (!kaito_ctrl &amp;&amp; score &lt; shikii) data += "&lt;small&gt;" + shikii + "点以上で解答が見られます&lt;\/small&gt;&lt;br&gt;";
+  data += "&lt;br&gt;&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+  Win0opened = true;
+  wh = 25*NUM + 230;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=350,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+
+// 解答ボタンを押したときの処理
+function kaito(){
+  var tmpk=null, chk="", data="", c;
+  // 解答しているかどうかチェック
+  if (bt_func == "nodisp") mm=1; else mm=2;
+  for (i=1;i&lt;=NUM;i++) { 
+    tmpk = document.f.elements[(i-1)*mm].value;
+    if (document.f.elements[(i-1)*mm].type=="text") chk += tmpk; else 
+       chk += s[i][document.f.elements[(i-1)*mm].selectedIndex];
+  }
+  if ( chk == "" ) { alert("ちゃんと答えてからね！"); return; }
+  score = scorecheck();
+  if (!kaito_ctrl &amp;&amp; score &lt; shikii) { alert(shikii + "点以上取らないとダメです"); return; }
+
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;解答&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=lavender&gt;&lt;center&gt;";
+  data += "&lt;h3&gt;解答&lt;\/h3&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt; 問 &lt;\/th&gt;&lt;th width=150&gt;解答&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;";
+    if (maru[i]) c="black"; else c="red";
+    data += "&lt;td align=center&gt;&lt;font color=" + c + "&gt;" + tagconv(a[i]) + "&lt;\/font&gt;&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;&lt;br&gt;&lt;form&gt;";
+  data += "&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+
+  Win0opened = true;
+  wh = 25*NUM + 160;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=300,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+// ヒント一覧
+function hintdisp (){
+  var data="";
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;解答&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=lavender&gt;&lt;center&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt; 問 &lt;\/th&gt;&lt;th width=150&gt;ヒント&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;";
+    data += "&lt;td&gt;" + h[i] + "&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;&lt;br&gt;&lt;form&gt;";
+  data += "&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+
+  Win0opened = true;
+  wh = 25*NUM + 140;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=300,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+// Unload したとき
+function winclose(){
+  if (Win0opened &amp;&amp; !Win0.closed) Win0.close();
+}
+
+// --&gt;
+&lt;/script&gt;
+
+&lt;!--&lt;/head&gt;--&gt;
+
+&lt;!--================ 本文はここから ====================--&gt;
+
+&lt;p&gt;&lt;body bgcolor=white text=black onUnload="winclose()"&gt;
+&lt;noscript&gt;
+この WEB問題（穴埋め問題）は JavaScript 1.1で書かれています。&lt;br&gt;
+Netscape Navigator 3.0 以上 または Internet Explorer 4.0 以上でご覧下さい。&lt;br&gt;
+WEB問題作成ツール http://www.fureai.or.jp/~irie/webquiz/ &lt;br&gt;
+&lt;/noscript&gt;&lt;/p&gt;
+&lt;script type="text/javascript" language="JavaScript"&gt;
+&lt;!--
+  document.write(str_body); 
+// --&gt;
+&lt;/script&gt;
+
+&lt;p&gt;&lt;/body&gt;
+&lt;/html&gt;&lt;/p&gt;</content><category term="Elementary"></category><category term="学習指導要領"></category><category term="穴埋め問題"></category></entry><entry><title>理科 【旧】小学校学習指導要領（平成２０年告示） 穴埋め問題</title><link href="/E001.html" rel="alternate"></link><published>2020-05-16T00:00:00+09:00</published><updated>2020-05-16T00:00:00+09:00</updated><author><name>aar0429</name></author><id>tag:None,2020-05-16:/E001.html</id><summary type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="ja"&gt;
+&lt;!--&lt;head&gt;--&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS"&gt;
+&lt;!----&gt;
+&lt;title&gt;理科 【旧】小学校学習指導要領（平成２０年告示） 穴埋め問題&lt;/title&gt;
+&lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
+&lt;meta http-equiv="Content-Script-Type" content="text/javascript"&gt;
+&lt;style type="text/css"&gt;
+&lt;!--
+body  { background-color:white; color:black}
+table,td,th { font-size:16px; }
+input { font-size:16px; font-family:monospace; vertical-align:middle;}
+input.qn { font-size:12px; font-family:monospace; vertical-align:middle; }
+input.bt { font-size:14px; vertical-align:middle; }
+select  { font-size:16px; font-family:monospace; vertical-align:middle;}
+hr      { color:lavender; height:5px; }
+.honbun { width …&lt;/style&gt;&lt;/meta&gt;&lt;/meta&gt;&lt;/meta&gt;&lt;/html&gt;</summary><content type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="ja"&gt;
+&lt;!--&lt;head&gt;--&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS"&gt;
+&lt;!----&gt;
+&lt;title&gt;理科 【旧】小学校学習指導要領（平成２０年告示） 穴埋め問題&lt;/title&gt;
+&lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
+&lt;meta http-equiv="Content-Script-Type" content="text/javascript"&gt;
+&lt;style type="text/css"&gt;
+&lt;!--
+body  { background-color:white; color:black}
+table,td,th { font-size:16px; }
+input { font-size:16px; font-family:monospace; vertical-align:middle;}
+input.qn { font-size:12px; font-family:monospace; vertical-align:middle; }
+input.bt { font-size:14px; vertical-align:middle; }
+select  { font-size:16px; font-family:monospace; vertical-align:middle;}
+hr      { color:lavender; height:5px; }
+.honbun { width:600; font-size:16px; }
+.mondai { width:600; font-size:16px; background-color:; padding:5px; font-family:monospace; }
+h3.ptitle { font-size:150%; font-weight:bold;} 
+.qtop   { font-weight:bold;} 
+.webquiz { font-size:9pt; }
+--&gt;
+&lt;/style&gt;
+
+&lt;script type="text/javascript" language="JavaScript"&gt;
+&lt;!--
+gyoshori = "br";    // 行処理 normal , bunkatu:行分割, br:改行タグ付加, thru:無処理
+shuffle = false;        // 行分割したとき各問いをランダムに入れ替える
+qn_string = "123";  // 問題番号の文字
+bt_func = "seigo";  // 番号ボタンのふるまい
+box_size = "";      // 解答欄のサイズ
+ssort = true;       // 選択肢を昇順に並べかえる
+kaito_ctrl = true;  // 解答ボタンの制限
+hint_btn = false;   // ヒントボタンの有無
+shikii = 50;        // 解答を得るための敷居値
+tag_conv = false;
+bgc1 = "lightcyan";
+bgc2 = "white";
+txtc1 = "black";
+txtc2 = "black";
+pre1 = "";
+pre2 = "";
+Win0opened = false;
+
+a = new Array();
+qn = new Array();
+ptitle = "";
+mondai_top = "以下の文中の空欄を適当な語句でうめて完成させなさい。";
+
+// 問題文 qdata
+var qdata = "   &lt;h2&gt;第１　目標&lt;/h2&gt;　\n\n｛自然｝に親しみ，見通しをもって｛観察｝，｛実験｝などを行い，問題解決の能力と自然を愛する心情を育てるとともに,自然の事物・現象についての｛実感｝を伴った理解を図り，｛科学的｝な見方や考え方を養う。\n\n&lt;h2&gt;第2　各学年の目標及び内容&lt;h2&gt;\n\n&lt;h4&gt;第3学年&lt;/h4&gt;\n\n&lt;em&gt;１　目標&lt;/em&gt;\n\n(1）　物の重さ，風やゴムの力並びに光，磁石及び電気を働かせたときの現象を｛比較｝しながら調べ，見いだした問題を興味・関心をもって｛追究｝したり｛ものづくり｝をしたりする活動を通して，それらの｛性質｝や｛働き｝についての見方や考え方を養う。\n\n（2）　身近に見られる動物や植物，日なたと日陰の地面を比較しながら調べ，見いだした問題を興味・関心をもって追究する活動を通して，生物を｛愛護｝する態度を育てるとともに，生物の｛成長のきまり｝や｛体のつくり｝，生物と｛環境｝とのかかわり，太陽と地面の様子との関係についての見方や考え方を養う。\n\n&lt;em&gt;２　内容&lt;/em&gt;\n\nA　物質・エネルギー\n\n（1）　物と重さ\n\n　粘土などを使い，物の重さや体積を調べ，物の性質についての考えをもつことができるようにする。\n\n　　ア　物は、｛形｝が変わっても重さは変わらないこと。\n\n　　イ　物は、｛体積｝が同じでも重さは違うことがあること。\n\n（2）　風やゴムの動き\n\n　風やゴムで物が動く様子を調べ，風やゴムの｛働き｝についての考えをもつことができるようにする。 \n\n　　ア　風の力は，物を動かすことができること。\n\n　　イ　ゴムの力は，物を動かすことができること。\n\n　（3）　光の性質\n\n　鏡などを使い，光の進み方や物に光が当たったときの明るさや暖かさを調べ，光の性質についての考えをもつことができるようにする。\n\n　　ア　日光は集めたり｛反射｝させたりできること。\n\n　　イ　物に｛日光｝を当てると，物の明るさや暖かさが変わること。\n\n　（4）　磁石の性質\n\n　｛磁石に付く物｝や磁石の働きを調べ，磁石の｛性質｝についての考えをもつことができるようにする。\n\n　　ア　物には，磁石に引き付けられる物と引き付けられない物があること。また，磁石に引き付けられる物には，磁石に付けると｛磁石になる｝物があること。\n\n　　イ　磁石の｛異極｝は引き合い，同極は退け合うこと。\n\n　（5）　電気の通り道\n\n　乾電池に｛豆電球｝などをつなぎ，電気を通すつなぎ方や電気を通す物を調べ，電気の｛回路｝についての考えをもつことができるようにする。\n\n　　ア　電気を通すつなぎ方と通さないつなぎ方があること。\n\n　　イ　電気を通す物と通さない物があること。\n\nB　生命・地球\n\n 　(1）　昆虫と植物\n\n　身近な昆虫や植物を探したり育てたりして，｛成長｝の過程や｛体のつくり｝を調べ，それらの成長のきまりや体のつくりについての考えをもつことができるようにする。\n\n　　ア　昆虫の育ち方には一定の順序があり，成虫の体は｛頭｝，｛胸｝及び｛腹｝からできていること。\n\n　　イ　植物の育ち方には一定の順序があり，その体は根，茎及び葉からできていること。\n\n　（2）　身近な自然の観察\n\n　身の回りの生物の様子を調べ，生物と｛その周辺の環境｝との関係についての考えをもつことができるようにする。\n\n　　ア　生物は，｛色｝，｛形｝，大きさなどの姿が違うこと。\n\n　　イ　生物は，その周辺の環境とかかわって生きていること。\n\n　（3）　太陽と地面の様子\n\n　｛日陰｝の位置の変化や，日なたと日陰の｛地面｝の様子を調べ，太陽と地面の様子との｛関係｝についての考えをもつことができるようにする。\n\n　　ア　日陰は｛太陽の光｝を遮るとでき，日陰の位置は太陽の｛動き｝によって変わること。\n\n　　イ　地面は太陽によって暖められ，日なたと日陰では｛地面｝の暖かさや湿り気に違いがあること。\n\n&lt;em&gt;3　内容の取扱い&lt;/em&gt;\n\n　（1）　内容の「A物質・エネルギー」の指導に当たっては，｛3｝種類以上のものづくりを行うものとする。\n\n　（2）　内容の「B生命・地球」の（1）については，次のとおり取り扱うものとする。\n\n　　ア　ア及びイについては，｛飼育｝，｛栽培｝を通して行うこと。\n\n　　イ　イの「植物の育ち方」については，｛夏生一年生｝の｛双子葉｝植物を扱うこと。\n\n　（3）　内容の「B生命・地球」の（3）のアの「太陽の動き」については，太陽が東から｛南｝を通って西に動くことを取り扱うものとする。また，太陽の動きを調べるときの方位は東，西，南，北を扱うものとする。\n\n&lt;h4&gt;第4学年&lt;/h4&gt;\n\n&lt;em&gt;１　目標&lt;/em&gt;\n\n（1）　空気や水，物の｛状態｝の変化，電気による現象を｛力｝，｛熱｝，｛電気｝の働きと関係付けながら調べ，見いだした問題を興味・関心をもって追究したりものづくりをしたりする活動を通して，それらの｛性質｝や｛働き｝についての見方や考え方を養う。\n\n（2）　人の体のつくり，動物の活動や植物の成長，天気の様子，月や星の位置の変化を運動，｛季節｝，気温，｛時間｝などと｛関係付け｝ながら調べ，見いだした問題を興味・関心をもって追究する活動を通して，生物を愛護する態度を育てるとともに，人の体のつくりと運動，動物の活動や植物の成長と環境とのかかわり，気象現象，月や星の動きについての見方や考え方を養う。\n\n&lt;em&gt;2　内容&lt;/em&gt;\n\n　（1）　空気と水の性質\n\nA　物質・エネルギー\n\n　（1）　空気と水の性質\n\n　閉じ込めた空気及び水に｛力｝を加え，その体積や｛圧（お）し返す｝の変化を調べ，空気及び水の性質についての考えをもつことができるようにする。\n\n　　ア　閉じ込めた空気を圧（お）すと，体積は｛小さく｝なるが，圧（お）し返す力は｛大きく｝なること。\n\n　　イ　閉じ込めた｛空気｝は圧（お）し縮められるが，｛水｝は圧（お）し縮められないこと。\n\n　（2）　金属，水，空気と温度\n\n　金属，水及び空気を｛温め｝たり｛冷やし｝たりして，それらの変化の様子を調べ，金属，水及び空気の性質についての考えをもつことができるようにする。\n\n　　ア　金属，水及び空気は，温めたり冷やしたりすると，その｛体積｝が変わること。\n\n　　イ　｛金属｝は熱せられた部分から順に温まるが，水や空気は熱せられた部分が｛移動｝して全体が温まること。\n\n　　ウ　水は，｛温度｝によって｛水蒸気｝や氷に変わること。また，水が氷になると体積が｛増える｝こと。\n\n　（3）　電気の働き\n\n　乾電池や光電池に豆電球や｛モーター｝などをつなぎ，乾電池や光電池の働きを調べ，電気の働きについての考えをもつことができるようにする。\n\n　　ア　乾電池の数やつなぎ方を変えると，豆電球の｛明るさ｝やモーターの｛回り方｝が変わること。\n\n　　イ　｛光電池｝を使ってモーターを回すことなどができること。\n\nB　生命・地球\n\n　（1）　人の体のつくりと運動\n\n　人や他の動物の体の動きを観察したり｛資料｝を活用したりして，｛骨｝や｛筋肉｝の動きを調べ，人の体のつくりと｛運動｝とのかかわりについての考えをもつことができるようにする。\n\n　　ア　人の体には骨と筋肉があること。\n\n　　イ　人が体を動かすことができるのは，骨，筋肉の働きによること。\n\n　（2）　季節と生物\n\n　身近な動物や植物を探したり育てたりして，｛季節｝ごとの動物の活動や植物の成長を調べ，それらの活動や｛成長｝と｛環境｝とのかかわりについての考えをもつことができるようにする。\n\n　　ア　動物の活動は，｛温かい｝季節，｛寒い｝季節などによって違いがあること。\n\n　　イ　｛植物｝の成長は，暖かい季節，寒い季節などによって違いがあること。\n\n　(3）　天気の様子\n\n　1日の気温の変化や水が｛蒸発｝する様子などを観察し，天気や｛気温｝の変化，水と水蒸気との関係を調べ，天気の様子や自然界の水の変化についての考えをもつことができるようにする。\n\n　　ア　天気によって1日の気温の変化の仕方に違いがあること。\n\n　　イ　水は，｛水面｝や地面などから蒸発し，水蒸気になって｛空気中｝に含まれていくこと。また，空気中の水蒸気は，｛結露｝して再び水になって現れることがあること。\n\n　（4）　月と星\n\n　月や星を観察し，月の｛位置｝と星の明るさや｛色｝及び位置を調べ，月や星の特徴や動きについての考えをもつことができるようにする。\n\n　　ア　月は｛日｝によって形が変わって見え，1日のうちでも｛時刻｝によって位置が変わること。\n\n　　イ　｛時刻｝には，明るさや色の違う星があること。\n\n　　ウ　星の集まりは，1日のうちでも｛時刻｝によって，｛並び方｝は変わらないが，位置が変わること。\n\n&lt;em&gt;3　内容の取扱い&lt;/em&gt;\n\n（1）　内容の「A物質・エネルギー」の指導に当たっては，｛2｝種類以上のものづくりを行うものとする。\n\n（2）　内容の「A物質・エネルギー」の（3）のアについては，｛直列｝つなぎと｛並列｝つなぎを扱うものとする。\n\n（3）　内容の「B生命・地球」の（1）のイについては，｛関節｝の働きを扱うものとする。\n\n（4）　内容の「B生命・地球」の（2）については，1年を通して動物の活動や植物の成長をそれぞれ｛2｝種類以上観察するものとする。\n\n&lt;h4&gt;第5学年&lt;/h4&gt;\n\n&lt;em&gt;１　目標&lt;/em&gt;\n\n（1）　物の｛溶け方｝，｛振り子｝の運動，電磁石の変化や働きをそれらにかかわる｛条件｝に目を向けながら調べ，見いだした問題を｛計画的｝に追究したりものづくりをしたりする活動を通して，物の変化の｛規則性｝についての見方や考え方を養う。\n\n（2）　植物の｛発芽｝から｛結実｝までの過程，動物の｛発生｝や成長，｛流水｝の様子，天気の変化を｛条件｝，時間，水量，自然災害などに目を向けながら調べ，見いだした問題を計画的に追究する活動を通して，生命を｛尊重｝する態度を育てるとともに，生命の｛連続性｝，流水の働き，気象現象の｛規則性｝についての見方や考え方を養う。\n\n&lt;em&gt;2　内容&lt;/em&gt;\n\nA　物質・エネルギー\n\n　(1）　物の溶け方\n\n　物を水に溶かし，水の｛温度｝や｛量｝による溶け方の違いを調べ，物の溶け方の規則性についての考えをもつことができるようにする。\n\n　　ア　物が水に溶ける量には｛限度｝があること。\n\n　　イ　物が水に溶ける量は水の温度や量，｛溶ける｝物によって違うこと。また，この性質を利用して，溶けている物を｛取り出す｝ことができること。\n\n　　ウ　物が水に溶けても，水と物とを合わせた｛重さ｝は変わらないこと。\n\n　（2）　振り子の運動\n\n　おもりを使い，おもりの｛重さ｝や糸の｛長さ｝などを変えて振り子の動く様子を調べ，振り子の運動の｛規則性｝についての考えをもつことができるようにする。\n\n 　　ア　糸につるしたおもりが1往復する時間は，おもりの重さなどによっては変わらないが，｛糸の長さ｝によって変わること。\n\n　（3）　電流の働き\n\n　電磁石の導線に｛電流｝を流し，電磁石の｛強さ｝の変化を調べ，電流の働きについての考えをもつことができるようにする。\n\n　　ア　電流の流れている｛電流｝は，鉄心を｛磁化｝する働きがあり，電流の｛向き｝が変わると，電磁石の極が変わること。\n\n　　イ　電磁石の強さは，電流の強さや導線の｛巻数｝によって変わること。\n\nB　生命・地球\n\n　（1）　植物の発芽，成長，結実\n\n　植物を育て，植物の発芽，成長及び結実の様子を調べ，植物の発芽，成長及び結実とその｛条件｝についての考えをもつことができるようにする。\n\n　　ア　植物は，種子の中の｛養分｝を基にして発芽すること。\n\n　　イ　植物の発芽には，水，空気及び｛温度｝が関係していること。\n\n　　ウ　植物の成長には，日光や｛肥料｝などが関係していること。\n\n　　エ　花にはおしべやめしべなどがあり，｛花粉｝が｛めしべ｝の先に付くとめしべのもとが｛実｝になり，実の中に種子ができること。\n\n　（2）　動物の誕生\n\n　魚を育てたり人の｛発生｝についての資料を活用したりして，卵の変化の様子や｛水中｝の小さな生物を調べ，動物の発生や成長についての考えをもつことができるようにする。\n\n　　ア　魚には｛雌雄｝があり，生まれた卵は日がたつにつれて中の様子が変化してかえること。\n\n　　イ　魚は，水中の小さな生物を｛食べ物｝にして生きていること。\n\n　　ウ　人は，｛母体｝内で成長して生まれること。\n\n　（3）　流水の働き\n\n　地面を流れる水や｛川｝の様子を観察し，流れる水の｛速さ｝や量による働きの違いを調べ，流れる水の働きと｛土地｝の変化の関係についての考えをもつことができるようにする。\n\n　　ア　流れる水には，土地を｛侵食｝したり，石や土などを｛運搬｝したり｛堆積｝させたりする働きがあること。\n\n　　イ　川の｛上流｝と｛下流｝によって，川原の石の大きさや形に違いがあること。\n\n　　ウ　雨の降り方によって，流れる水の速さや水の量が変わり，｛増水｝により土地の様子が大きく変化する場合があること。\n\n　（4）　天気の変化\n\n　1日の雲の様子を観測したり，｛映像｝などの情報を活用したりして，雲の動きなどを調べ，天気の変化の仕方についての考えをもつことができるようにする。\n\n　　ア　雲の量や動きは，天気の変化と関係があること。\n\n　　イ　天気の変化は，映像などの気象情報を用いて｛予想｝できること。\n\n&lt;em&gt;3　内容の取扱い&lt;/em&gt;\n\n　（1）　内容の「A物質・エネルギー」の指導に当たっては，｛2｝種類以上のものづくりを行うものとする。\n\n　（2）　内容の「B生命・地球」の（1）については，次のとおり取り扱うものとする。\n\n　　ア　アの「種子の中の養分」については，｛でんぷん｝を扱うこと。\n\n　　イ　エについては，おしべ，めしべ，｛がく｝及び｛花びら｝を扱うこと。また，｛受粉｝については，｛風｝や昆虫などが関係していることにも触れること。\n\n　（3）　内容の「B生命・地球」の（2）のウについては，｛受精｝に至る過程は取り扱わないものとする。\n\n　（4）　内容の「B生命・地球」の（4）のイについては，｛台風｝の進路による天気の変化や台風と｛降雨｝との関係についても触れるものとする。&gt;\n\n&lt;h4&gt;第6学年&lt;/h4&gt;\n\n&lt;em&gt;１　目標&lt;/em&gt;\n\n(1）　燃焼，水溶液，てこ及び電気による現象についての｛要因｝や規則性を｛推論｝しながら調べ，見いだした問題を計画的に追究したりものづくりをしたりする活動を通して，物の性質や規則性についての見方や考え方を養う。\n\n(2）　生物の体のつくりと働き，生物と環境，｛土地｝のつくりと変化の様子，月と｛太陽｝の関係を推論しながら調べ，見いだした問題を計画的に追究する活動を通して，生命を尊重する態度を育てるとともに，生物の体の働き，生物と環境とのかかわり，土地のつくりと変化のきまり，月の｛位置｝や｛特徴｝についての見方や考え方を養う。\n\n&lt;em&gt;2　内容&lt;/em&gt;\n\nA　物質・エネルギー\n\n　（1）　燃焼の仕組み\n\n　物を燃やし，物や空気の変化を調べ，｛燃焼｝の仕組みについての考えをもつことができるようにする。\n\n　　ア　｛植物体｝が燃えるときには，空気中の｛酸素｝が使われて｛二酸化炭素｝ができること。\n\n　（2）　水溶液の性質\n\n　いろいろな｛水溶液｝を使い，その性質や｛金属｝を変化させる様子を調べ，水溶液の性質や働きについての考えをもつことができるようにする。\n\n　　ア　水溶液には，酸性，アルカリ性及び｛中｝性のものがあること。\n\n　　イ　水溶液には，｛気体｝が溶けているものがあること。\n\n　　ウ　水溶液には，金属を変化させるものがあること。\n\n　（3）　てこの規則性\n\n　てこを使い，力の加わる位置や大きさを変えて，てこの仕組みや働きを調べ，てこの｛規則性｝についての考えをもつことができるようにする。\n\n　　ア　水平につり合った棒の｛支点｝から等距離に物をつるして棒が｛水平｝になったとき，物の重さは｛等しい｝こと。\n\n　　イ　力を加える位置や力の大きさを変えると，てこを｛傾ける｝働きが変わり，てこがつり合うときにはそれらの間に｛規則性｝があること。\n\n　　ウ　身の回りには，てこの規則性を利用した｛道具｝があること。\n\n　（4）　電気の利用\n\n　｛手回し発電機｝などを使い，電気の利用の仕方を調べ，電気の性質や働きについての考えをもつことができるようにする。\n\n　　ア　電気は，つくりだしたり｛蓄え｝たりすることができること。\n\n　　イ　電気は，光，｛音｝，｛熱｝などに変えることができること。\n\n　　ウ　｛電熱線｝の発熱は，その｛太さ｝によって変わること。\n\n　　エ　身の回りには，電気の性質や働きを利用した道具があること。\n\nB　生命・地球\n\n　（1）　人の体のつくりと働き\n\n　人や他の動物を観察したり資料を活用したりして,｛呼吸｝，消化，｛排泄｝及び｛循環｝の働きを調べ，人や他の動物の体のつくりと働きについての考えをもつことができるようにする。\n\n　　ア　体内に｛酸素｝が取り入れられ，体外に二酸化炭素などが出されていること。\n\n　　イ　食べ物は，口，胃，｛腸｝などを通る間に消化，吸収され，吸収されなかった物は｛排泄｝されること。\n\n　　ウ　血液は，｛心臓｝の働きで体内を巡り，｛養分｝，酸素及び二酸化炭素などを運んでいること。\n\n　　エ　体内には，生命活動を維持するための様々な｛臓器｝があること。\n\n　（2）　植物の養分と水の通り道\n\n　植物を観察し，植物の体内の｛水｝などの行方や｛葉｝で養分をつくる働きを調べ，植物の体のつくりと働きについての考えをもつことができるようにする。\n\n　　ア　植物の葉に日光が当たると｛でんぷん｝ができること。\n\n　　イ　根，茎及び葉には，水の｛通り道｝があり，｛根｝から吸い上げられた水は主に葉から｛蒸散｝していること。\n\n　（3）　生物と環境\n\n　動物や植物の｛生活｝を観察したり，資料を活用したりして調べ，生物と環境とのかかわりについての考えをもつことができるようにする。\n\n　　ア　生物は，水及び｛空気｝を通して周囲の環境とかかわって生きていること。\n\n　　イ　生物の間には，｛食う食われる｝という関係があること。\n\n　（4）　土地のつくりと変化\n\n　土地やその中に含まれる物を観察し，土地の｛つくり｝や土地の｛でき方｝を調べ，土地のつくりと変化についての考えをもつことができるようにする。\n\n　　ア　土地は，｛礫（れき）｝，砂，泥，｛火山灰｝及び｛岩石｝からできており，層をつくって広がっているものがあること。\n\n　　イ　地層は，流れる水の働きや火山の噴火によってでき，｛化石｝が含まれているものがあること。\n\n　　ウ　土地は，火山の噴火や｛地震｝によって変化すること。\n\n　（5）　月と太陽\n\n　月と太陽を観察し，月の位置や形と太陽の位置を調べ，月の形の見え方や｛表面｝の様子についての考えをもつことができるようにする。 \n\n　　ア　月の｛輝いている｝側に太陽があること。また，月の形の見え方は，太陽と月の｛位置関係｝によって変わること。\n\n　　イ　月の表面の様子は，｛太陽｝と違いがあること。\n\n&lt;em&gt;3　内容の取扱い&lt;/em&gt;\n\n（1）　内容の「A物質・エネルギー」の指導に当たっては，2種類以上のものづくりを行うものとする。\n\n（2）　内容の「B生命・地球」の（1）については，次のとおり取り扱うものとする。\n\n　ア　ウについては，心臓の｛拍動｝と｛脈拍｝が関係することにも触れること。\n\n　イ　エについては，主な臓器として，｛肺｝，｛胃｝，｛小腸｝，｛大腸｝，｛肝臓｝，｛腎臓｝，｛心臓｝を扱うこと。\n\n（3）　内容の「B生命・地球」の（3）のアについては，｛水｝が循環していることにも触れるものとする。\n\n（4）　内容の「B生命・地球」の（4）については，次のとおり取り扱うものとする。\n\n　ア　アについては，岩石として｛礫岩｝，｛砂岩｝及び｛泥岩｝を扱うこと。\n\n　イ　イの「化石」については，地層が｛流れる水｝の働きによって堆積したことを示す証拠として扱うこと。\n\n（5）　内容の「B生命・地球」の（5）のアについては，｛地球｝から見た太陽と月の位置関係で扱うものとする。\n\n&lt;h2&gt;第3　指導計画の作成と内容の取り扱い&lt;/h2&gt;\n\n1.指導計画の作成に当たっては，次の事項に配慮するものとする。\n\n　（1）　第2の各学年の内容を通じて観察，実験や｛自然体験｝，｛科学的｝な体験を充実させることによって，科学的な知識や概念の定着を図り，科学的な見方や考え方を育成するよう配慮すること。\n\n　（2）　観察，実験の結果を整理し考察する｛学習活動｝や，科学的な言葉や｛概念｝を使用して考えたり説明したりするなどの学習活動が充実するよう配慮すること。\n\n　（3）　博物館や科学学習センターなどと連携，｛協力｝を図りながら，それらを積極的に活用するよう配慮すること。\n\n　（4）　第1章総則の第1の2及び第3章道徳の第1に示す｛道徳教育｝の目標に基づき，道徳の時間などとの関連を考慮しながら，第3章道徳の第2に示す内容について，理科の特質に応じて適切な指導をすること。\n\n2.第2の内容の取扱いについては，次の事項に配慮するものとする。\n\n　（1）　観察，実験，栽培，飼育及びものづくりの指導については，指導内容に応じて｛コンピュータ｝，｛視聴覚機器｝などを適切に活用できるようにすること。また，事故の防止に十分留意すること。\n\n　（2）　生物，天気，川，土地などの指導については，野外に出掛け地域の自然に親しむ活動や｛体験的｝な活動を多く取り入れるとともに，｛自然環境｝を大切にし，その｛保全｝に寄与しようとする態度を育成するようにすること。\n\n　（3）　個々の児童が｛主体的｝に問題解決活動を進めるとともに，学習の成果と｛日常生活｝との関連を図り，自然の事物・現象について｛実感｝を伴って理解できるようにすること。";
+// === end of qdata
+
+// ヒント hint
+var hintdata = "";
+// === end of hintdata
+
+h = new Array();
+if (hint_btn || bt_func =="hint") h = makehint(hintdata);
+
+separator = new Array("｛","｝","｜");
+tag0 = new Array("&lt;","&gt;");
+tag1 = new Array("&amp;lt;","&amp;gt;");
+
+if (gyoshori=="normal" || gyoshori=="bunkatu") question = rowsplit(qdata);
+if (gyoshori=="br") question = plusbr(qdata);
+if (gyoshori=="thru") question = qdata;
+
+// 問題番号文字列をセット NUM:空欄の数 文字不足時は数字にセット
+var x=0, NUM=0, qnlen;
+while(x&gt;=0){
+  x=question.indexOf(separator[0],x);
+  if (x==-1) break;
+  x++; NUM++;
+}
+qnlen = qn_string.length;
+var qns = qn_string.substring(0,1), qnn;
+if (qns=="1" || qns=="a" || qns=="A") qnn=1; else qnn="あ".length;
+for(i=1;i&lt;=qnlen;i++) { qn[i]=qn_string.substring((i-1)*qnn,i*qnn);}
+if (qnlen&lt;NUM) for(i=1;i&lt;=NUM;i++) { qn[i]=i; }
+
+s = new Array();
+for (i=0;i&lt;=NUM;i++) s[i] = new Array();  // select form value 配列
+
+// 問題文中から穴埋め箇所と解答を抽出し，Form TAG に置き換え
+var x0=0, x1=0, x2=0, i=1, ql, str="", bx_size;
+while(x1&gt;=0){
+  ql=question.length;
+  x1 = question.indexOf(separator[0],x0);
+  if (x1==-1) break;
+  x2 = question.indexOf(separator[1],x0);
+  a[i] = question.substring(x1+separator[0].length, x2);
+  if (tag_conv) a[i]=tagrev(a[i]);
+  str = question.substring(0,x1);
+  if (a[i].indexOf(separator[2],0)==-1){
+    if (box_size=="") bx_size=jstrlen(a[i]); else bx_size=box_size;
+    str += "&lt;input name=q" + i + " size=" + bx_size + "&gt;";
+  } else {
+    str += fselect(a[i],i);
+  }
+  if (bt_func != "nodisp") str += "&lt;input type=button value='" + qn[i] + "' class=qn";
+  if (bt_func == "seigo") str += " onClick='hantei(" + i + ")'&gt;";
+  if (bt_func == "hint") str += " onClick='alert(\"" + h[i] + "\")'&gt;";
+  if (bt_func == "none") str += "&gt;";
+  x0 = str.length;
+  question = str + question.substring(x2+separator[1].length,ql);
+  i++;
+}
+
+var str_body = "&lt;div class=honbun&gt;&lt;form name=f&gt;";
+str_body += "&lt;h3 class=ptitle&gt;" + ptitle + "&lt;\/h3&gt;";
+str_body += "&lt;b class=qtop&gt;" + mondai_top + "&lt;\/b&gt;";
+str_body += "&lt;hr width=600&gt;&lt;div class=mondai&gt;" + question + "&lt;\/div&gt;&lt;hr width=600&gt;";
+str_body += "&lt;table width=600&gt;&lt;tr&gt;&lt;td&gt;";
+str_body += "&lt;div align=center&gt;&lt;input type=button value='採点' onClick='saiten();' class=bt&gt;　&lt;input type=reset value='リセット' class=bt&gt;";
+str_body += "　&lt;input type=button value='解答' onClick='kaito();' class=bt&gt;";
+if (hint_btn) str_body += "　&lt;input type=button value='ヒント' onClick='hintdisp();' class=bt&gt;";
+
+str_body += "&lt;\/td&gt;&lt;\/tr&gt;&lt;\/table&gt;&lt;\/form&gt;&lt;\/div&gt;";
+
+
+// ------------ サブルーチン -------------
+
+// ヒント配列 h[] の作成
+function makehint(data) {
+  str = data.split("\n");
+  h = new Array();
+  j=1;
+  for (i in str){
+    if (str[i] != "") {
+      h[j] = str[i];
+      j++;
+    }
+  }
+  return h; 
+}
+
+// データを空行で分割
+function qconv(data){
+  str = data.split("\n");
+  var j=1;
+  q[j]="";
+  for (i in str) {
+    if (str[i] != "") {
+       q[j] += str[i] + "&lt;br&gt;";
+    } else if (i&gt;0) {
+       if (str[i-1] != "") j++;
+       q[j]="";
+    }
+  }
+  return j-1;
+}
+
+// データを行単位で分割
+function qconv2(data){
+  str = data.split("\n");
+  j=1;
+  for (i in str) {
+    if (str[i] != "") { q[j]=str[i]; j++; }
+  }
+  return j-1;
+}
+
+// データを行, 空行で分割し，行末に改行タグを挿入。shuffleの場合はランダム化
+function rowsplit(data){
+  str = data.split("\n");
+  q = new Array();
+  x = new Array();
+  hintm = new Array();
+
+  if (gyoshori=="normal") j = qconv(data);
+  if (gyoshori=="bunkatu") j = qconv2(data);
+
+  // ヒントを２次元配列 hintm[][] に格納
+  for (i=0;i&lt;=j;i++) hintm[i] = new Array();
+  var xx=0, m=0, n;  // m:何問目
+  for (i=1;i&lt;=j;i++){
+     xx=0; n=0;
+     while(xx&gt;=0){
+       xx=q[i].indexOf(separator[0],xx);
+       if (xx==-1) break;
+       xx++; m++; n++;
+       hintm[i][n] = h[m];  // i問目のn番目のヒント
+     }
+  }
+
+  x = ransu(j);
+  var ss = "&lt;table width=600 border=0 cellpadding=5 cellspacing=0&gt;";
+  m=0;
+  for (i=1;i&lt;=j;i++){
+    if (shuffle) {
+        k=x[i];
+        // ヒント配列組み直し
+        xx=0; n=0;
+        while(xx&gt;=0){
+          xx=q[k].indexOf(separator[0],xx);
+          if (xx==-1) break;
+          xx++; m++; n++;
+          h[m] = hintm[k][n];  // k問目のn番目のヒント
+        }
+    } else k=i;
+    if (i % 2 == 1) { bgc=bgc1; txtc=txtc1;} else { bgc=bgc2; txtc=txtc2; }
+    ss += "&lt;tr&gt;&lt;td bgcolor=" + bgc + " valign=top width=36&gt;";
+    ss += "&lt;table border=2 cellspacing=0&gt;&lt;tr&gt;&lt;th width=24 height=24 bgcolor=pink&gt;&lt;font color=black&gt;" + i + "&lt;\/font&gt;&lt;\/th&gt;&lt;\/tr&gt;&lt;\/table&gt;&lt;\/td&gt;";
+    ss += "&lt;td bgcolor=" + bgc + " width=564&gt;&lt;font color=" + txtc + "&gt;"+ pre1 + q[k] + pre2 + "&lt;\/font&gt;&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  ss += "&lt;\/table&gt;";
+  return ss;
+}
+
+// データはそのままに，各行の最後に &lt;br&gt;を挿入
+function plusbr(data){
+  str = data.split("\n");
+  var ss="";
+  for (i in str) ss += str[i] + "&lt;br&gt;";
+  return ss;
+}
+
+// 文字列からセパレータ｜を探し，選択肢を抽出。select form 作成
+function fselect(str,n) {
+  var x=0, i=1, j, data;
+  var xr = new Array();
+  var w = new Array();
+  s[n][0]=""; w[0]="";
+  while(x&gt;=0){
+    alen = str.length;
+    x = str.indexOf(separator[2],0);
+    if (x==-1) break;
+    w[i]=str.substring(0,x);
+    str = str.substring(x+separator[2].length,alen);
+    i++;
+  }
+  w[i]=str;
+  a[n]=w[1];  // 正解を a[n] にセット
+  data = "&lt;select name=q"  + n + "&gt;&lt;option value=''&gt; ";
+  if (ssort)  w.sort(); else xr = ransu(i);
+  for (j=1;j&lt;=i;j++){
+    if (ssort) k = j; else k = xr[j];
+    data += "&lt;option value='" + w[k] + "'&gt;" + w[k];
+    s[n][j]=w[k];
+  }
+  data += "&lt;\/select&gt;";
+  return data;
+}
+
+// n までの整数をランダムに発生  戻り値 x[]
+function ransu(n) {
+  var k=1, l,  bingo;
+  var x=new Array();
+  x[k] = Math.floor(n * Math.random())+1;
+  k++;
+  while ( k&lt;=n ) {
+    x[k] = Math.floor(n * Math.random())+1;
+    bingo = 0;
+    for (l=1; l&lt;k; l++) {  // すでに同じ数字がないかチェック
+       if ( x[k] == x[l] ) { bingo=1; break; }
+    }
+    if (bingo==0) k++;     // 同じ数字がなければ k++
+  }
+  return x;
+}
+
+// 文字列の長さを返す（日本語を２としてカウント）
+function jstrlen(str) {
+  var len = 0, i;
+  str = escape(str);
+  for (i=0;i&lt;str.length;i++,len++) {
+    if (str.charAt(i) == "%") {
+      if (str.charAt(++i) == "u") {
+        i += 3;
+        len++;
+      }
+      i++;
+    }
+  }
+  return len;
+}
+
+// タグ文字変換 &lt;&gt; → &amp;lt; &amp;gt;
+function tagconv(s){
+  var i, x;
+  for(i in tag0){
+    x = s.indexOf(tag0[i],0);
+    while(x&gt;-1){
+      s = s.substring(0,x) + tag1[i] + s.substring(x+tag0[i].length,s.length);
+      x = s.indexOf(tag0[i],0);
+    }
+  }
+  return s;
+}
+
+// タグ文字変換 &amp;lt; &amp;gt; → &lt;&gt;
+function tagrev(s){
+  var i, x;
+  for(i in tag1){
+    x = s.indexOf(tag1[i],0);
+    while(x&gt;-1){
+      s = s.substring(0,x) + tag0[i] + s.substring(x+tag1[i].length,s.length);
+      x = s.indexOf(tag1[i],0);
+    }
+  }
+  return s;
+}
+
+// 正誤判定ボタンを押した時の処理
+function hantei(m) {
+  var answer="";
+  if (document.f.elements[(m-1)*2].type == "text") { 
+    answer = document.f.elements[(m-1)*2].value;
+  } else {
+    answer = s[m][document.f.elements[(m-1)*2].selectedIndex];
+  }
+  if (answer==a[m]) alert("○ 正解！"); else alert("× 違うよ！");
+}
+
+// 採点し，score を返す
+function scorecheck(){
+  var tmp, data="", seikai=0, mm;
+  answer = new Array();
+  maru = new Array();
+  if (bt_func == "nodisp") mm=1; else mm=2;
+  // 正解数をカウントし，○×判定 maru[]
+  for (i=1;i&lt;=NUM;i++) {
+    if (document.f.elements[(i-1)*mm].type=="text") {
+        answer[i] = document.f.elements[(i-1)*mm].value;
+    } else {
+      answer[i] = s[i][document.f.elements[(i-1)*mm].selectedIndex];
+    }
+    if (answer[i] == a[i]) {
+       maru[i] = true;
+       seikai += 1;
+    } else { maru[i]=false; }
+  }
+  score = Math.floor(100*seikai/NUM + 0.5);
+  return score;
+}
+
+// 採点ボタンを押したときの処理
+function saiten(){
+  score = scorecheck();
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;採点結果&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=pink&gt;&lt;center&gt;";
+  data += "&lt;h3&gt;結　果&lt;\/h3&gt;&lt;form&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt;問&lt;\/th&gt;&lt;th width=120&gt;あなたの解答&lt;\/th&gt;&lt;th&gt;正誤&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;&lt;td nowrap&gt;　" + tagconv(answer[i]) + "&lt;\/td&gt;&lt;th&gt;";
+    data += "&lt;font ";
+    if (maru[i]) data += "color=blue&gt;○"; else data += "color=red&gt;×";
+    data += "&lt;\/font&gt;&lt;\/th&gt;";
+    data += "&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;";
+  data += "&lt;font color=red&gt;&lt;u&gt;&lt;font size=7&gt;" + score + "&lt;\/font&gt;&lt;\/u&gt;&lt;font size=6&gt; 点&lt;\/font&gt;&lt;\/font&gt;&lt;br&gt;";
+  if (!kaito_ctrl &amp;&amp; score &lt; shikii) data += "&lt;small&gt;" + shikii + "点以上で解答が見られます&lt;\/small&gt;&lt;br&gt;";
+  data += "&lt;br&gt;&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+  Win0opened = true;
+  wh = 25*NUM + 230;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=350,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+
+// 解答ボタンを押したときの処理
+function kaito(){
+  var tmpk=null, chk="", data="", c;
+  // 解答しているかどうかチェック
+  if (bt_func == "nodisp") mm=1; else mm=2;
+  for (i=1;i&lt;=NUM;i++) { 
+    tmpk = document.f.elements[(i-1)*mm].value;
+    if (document.f.elements[(i-1)*mm].type=="text") chk += tmpk; else 
+       chk += s[i][document.f.elements[(i-1)*mm].selectedIndex];
+  }
+  if ( chk == "" ) { alert("ちゃんと答えてからね！"); return; }
+  score = scorecheck();
+  if (!kaito_ctrl &amp;&amp; score &lt; shikii) { alert(shikii + "点以上取らないとダメです"); return; }
+
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;解答&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=lavender&gt;&lt;center&gt;";
+  data += "&lt;h3&gt;解答&lt;\/h3&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt; 問 &lt;\/th&gt;&lt;th width=150&gt;解答&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;";
+    if (maru[i]) c="black"; else c="red";
+    data += "&lt;td align=center&gt;&lt;font color=" + c + "&gt;" + tagconv(a[i]) + "&lt;\/font&gt;&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;&lt;br&gt;&lt;form&gt;";
+  data += "&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+
+  Win0opened = true;
+  wh = 25*NUM + 160;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=300,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+// ヒント一覧
+function hintdisp (){
+  var data="";
+  data ="&lt;html&gt;&lt;head&gt;&lt;title&gt;解答&lt;\/title&gt;&lt;\/head&gt;&lt;bo" + "dy bgcolor=lavender&gt;&lt;center&gt;";
+  data += "&lt;table border cellspacing=0&gt;";
+  data += "&lt;tr&gt;&lt;th width=25 height=25&gt; 問 &lt;\/th&gt;&lt;th width=150&gt;ヒント&lt;\/th&gt;";
+  for (i=1;i&lt;=NUM;i++) {
+    data += "&lt;tr&gt;&lt;th height=25&gt;" + qn[i] + "&lt;\/th&gt;";
+    data += "&lt;td&gt;" + h[i] + "&lt;\/td&gt;&lt;\/tr&gt;";
+  }
+  data += "&lt;\/table&gt;&lt;br&gt;&lt;br&gt;&lt;form&gt;";
+  data += "&lt;input type=button value='閉じる' onClick='window.close()'&gt;&lt;\/center&gt;";
+  data += "&lt;\/form&gt;&lt;\/body&gt;&lt;\/html&gt;";
+
+  Win0opened = true;
+  wh = 25*NUM + 140;
+  if (wh &gt; 600) wh=600;
+  Win0=window.open("","Win0","width=300,height=" + wh + ",toolbar=0,menubar=0,resizable=1,scrollbars=1,location=0,directories=0,status=0");
+  Win0.focus();
+  Win0.document.open();
+  Win0.document.write(data);
+  Win0.document.close();
+}
+
+// Unload したとき
+function winclose(){
+  if (Win0opened &amp;&amp; !Win0.closed) Win0.close();
+}
+
+// --&gt;
+&lt;/script&gt;
+
+&lt;!--&lt;/head&gt;--&gt;
+
+&lt;!--================ 本文はここから ====================--&gt;
+
+&lt;p&gt;&lt;body bgcolor=white text=black onUnload="winclose()"&gt;
+&lt;noscript&gt;
+この WEB問題（穴埋め問題）は JavaScript 1.1で書かれています。&lt;br&gt;
+Netscape Navigator 3.0 以上 または Internet Explorer 4.0 以上でご覧下さい。&lt;br&gt;
+WEB問題作成ツール http://www.fureai.or.jp/~irie/webquiz/ &lt;br&gt;
+&lt;/noscript&gt;&lt;/p&gt;
+&lt;script type="text/javascript" language="JavaScript"&gt;
+&lt;!--
+  document.write(str_body); 
+// --&gt;
+&lt;/script&gt;
+
+&lt;p&gt;&lt;/body&gt;
+&lt;/html&gt;&lt;/p&gt;</content><category term="Elementary"></category><category term="学習指導要領"></category><category term="穴埋め問題"></category></entry><entry><title>理科 小学校学習指導要領（平成２９年告示） 穴埋め問題</title><link href="/E002.html" rel="alternate"></link><published>2020-05-16T00:00:00+09:00</published><updated>2020-05-16T00:00:00+09:00</updated><author><name>aar0429</name></author><id>tag:None,2020-05-16:/E002.html</id><summary type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="ja"&gt;
+&lt;!--&lt;head&gt;--&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS"&gt;
+&lt;!----&gt;
+&lt;title&gt;理科 小学校学習指導要領（平成２９年告示） 穴埋め問題&lt;/title&gt;
+&lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
+&lt;meta http-equiv="Content-Script-Type" content="text/javascript"&gt;
+&lt;style type="text/css"&gt;
+&lt;!--
+body  { background-color:white; color:black}
+table,td,th { font-size:16px; }
+input { font-size:16px; font-family:monospace; vertical-align:middle;}
+input.qn { font-size:12px; font-family:monospace; vertical-align:middle; }
+input.bt { font-size:14px; vertical-align:middle; }
+select  { font-size:16px; font-family:monospace; vertical-align:middle;}
+hr      { color:lavender; height:5px; }
+.honbun { width:600 …&lt;/style&gt;&lt;/meta&gt;&lt;/meta&gt;&lt;/meta&gt;&lt;/html&gt;</summary><content type="html">&lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"&gt;
+&lt;html lang="ja"&gt;
+&lt;!--&lt;head&gt;--&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=SHIFT_JIS"&gt;
+&lt;!----&gt;
+&lt;title&gt;理科 小学校学習指導要領（平成２９年告示） 穴埋め問題&lt;/title&gt;
+&lt;meta http-equiv="Content-Style-Type" content="text/css"&gt;
+&lt;meta http-equiv="Content-Script-Type" content="text/javascript"&gt;
+&lt;style type="text/css"&gt;
+&lt;!--
+body  { background-color:white; color:black}
+table,td,th { font-size:16px; }
+input { font-size:16px; font-family:monospace; vertical-align:middle;}
+input.qn { font-size:12px; font-family:monospace; vertical-align:middle; }
+input.bt { font-size:14px; vertical-align:middle; }
+select  { font-size:16px; font-family:monospace; vertical-align:middle;}
+hr      { color:lavender; height:5px; }
+.honbun { width:600; font-size:16px; }
+.mondai { width:600; font-size:16px; background-color:; padding:5px; font-family:monospace; }
+h3.ptitle { font-size:150%; font-weight:bold;} 
+.qtop   { font-weight:bold;} 
+.webquiz { font-size:9pt; }
+--&gt;
+&lt;/style&gt;
+
+&lt;script type="text/javascript" language="JavaScript"&gt;
+&lt;!--
+gyoshori = "br";    // 行処理 normal , bunkatu:行分割, br:改行タグ付加, thru:無処理
+shuffle = false;        // 行分割したとき各問いをランダムに入れ替える
+qn_string = "123";  // 問題番号の文字
+bt_func = "seigo";  // 番号ボタンのふるまい
+box_size = "";      // 解答欄のサイズ
+ssort = true;       // 選択肢を昇順に並べかえる
+kaito_ctrl = true;  // 解答ボタンの制限
+hint_btn = false;   // ヒントボタンの有無
+shikii = 50;        // 解答を得るための敷居値
+tag_conv = false;
+bgc1 = "lightcyan";
+bgc2 = "white";
+txtc1 = "black";
+txtc2 = "black";
+pre1 = "";
+pre2 = "";
+Win0opened = false;
+
+a = new Array();
+qn = new Array();
+ptitle = "";
+mondai_top = "以下の文中の空欄を適当な語句でうめて完成させなさい。";
+
+// 問題文 qdata
+var qdata = "   &lt;h2&gt;第１　目標&lt;/h2&gt;\n\n｛自然｝に親しみ，理科の見方・考え方を働かせ，｛見通し｝をもって観察，実験を行うことなどを通して，自然の事物・｛現象｝についての問題を｛科学的｝に解決するために必要な資質・能力を次のとおり育成することを目指す。\n\n　(1) 自然の事物・現象についての理解を図り，｛観察｝，｛実験｝などに関する基本的な技能を身に付けるようにする\n\n　(2) 観察，実験などを行い，｛問題解決｝の力を養う\n\n　(3) 自然を愛する心情や｛主体的｝に問題解決しようとする態度を養う。\n\n&lt;h2&gt;第２ 各学年の目標及び内容&lt;/h2&gt;\n\n&lt;h4&gt;第3学年&lt;/h4&gt;\n\n&lt;em&gt;１ 目 標&lt;/em&gt;\n\n(1) 物質・エネルギー\n\n　① 物の性質，風とゴムの力の働き，光と音の性質，磁石の性質及び電気の回路についての理解を図り，観察，実験などに関する基本的な｛技能｝を身に付けるようにする。\n\n　② 物の性質，風とゴムの力の働き，光と音の性質，磁石の性質及び電気の回路について追究する中で，主に｛差異点｝や｛共通点｝を基に，問題を見いだす力を養う\n\n　③ 物の性質，風とゴムの力の働き，光と音の性質，磁石の性質及び電気の回路について追究する中で，｛主体的｝に問題解決しようとする態度を養う。\n\n(2) 生命・地球\n\n　① 身の回りの生物，太陽と地面の様子についての理解を図り，観察，実験などに関する基本的な技能を身に付けるようにする。\n\n　② 身の回りの生物，太陽と地面の様子について追究する中で，主に差異点や共通点を基に，問題を見いだす力を養う。\n\n　③ 身の回りの生物，太陽と地面の様子について追究する中で，生物を｛愛護する｝態度や主体的に問題解決しようとする態度を養う\n\n&lt;em&gt;２ 内 容&lt;/em&gt;\n\nＡ 物質・エネルギー\n\n　(1) 物と重さ\n\n　 物の性質について，｛形｝や｛堆積｝に着目して，｛重さ｝を比較しながら調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　（ア） 物は，形が変わっても｛重さ｝は変わらないこと\n\n　　(イ） 物は，｛体積｝が同じでも重さは違うことがあること\n\n　イ 物の形や体積と重さとの関係について追究する中で，差異点や共通点を基に，物の性質についての問題を見いだし，｛表現｝すること。\n\n　(2) 風とゴムの力の働き\n\n　風とゴムの力の働きについて，力と物の動く様子に着目して，それらを｛比較｝しながら調べる活動を通して，次の事項を身に付けることができるよう指導する\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 風の力は，物を動かすことができること。また，風の力の｛大きさ｝を変えると，物が動く様子も変わること。\n\n　　(イ） ゴムの力は，物を動かすことができること。また，ゴムの力の大きさを変えると，物が動く｛様子｝も変わること。\n\n　イ 風とゴムの力で物が動く様子について追究する中で，差異点や共通点を基に，風とゴムの力の働きについての｛問題｝を見いだし，表現すること。\n\n(3) 光と音の性質\n\n　光と音の性質について，光を当てたときの明るさや｛暖かさ｝，音を出したときの｛震え方｝に着目して，光の強さや音の大きさを変えたときの違いを｛比較｝しながら調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 日光は｛直進｝し，集めたり｛反射｝させたりできること。\n\n　　(イ） 物に日光を当てると，物の明るさや暖かさが変わること。\n\n　　(ウ） 物から音が出たり｛伝わったり｝するとき，物は震えていること。また，音の｛大きさ｝が変わるとき物の震え方が変わること\n\n　イ 光を当てたときの明るさや暖かさの様子，音を出したときの震え方の様子について追究する中で，差異点や共通点を基に，光と音の｛性質｝について問題を見いし、表現すること。\n\n　(4) 磁石の性質\n\n　磁石の性質について，磁石を身の回りの物に近付けたときの様子に着目して，それらを｛比較｝しながら調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること\n\n　　（ア） 磁石に引き付けられる物と引き付けられない物があること。また，磁石に近付けると｛磁石になる｝物があること。\n\n　　(イ） 磁石の異極は｛引き合い｝，同極は｛退け合う｝こと。\n\n　イ 磁石を身の回りの物に近付けたときの様子について追究する中で，差異点や共通点を基に，磁石の｛性質｝についての問題を見いだし，表現すること。\n\n　(5) 電気の通り道\n\n　電気の｛回路｝について，乾電池と｛豆電球｝などのつなぎ方と乾電池につないだ物の様子に着目して，電気を｛通すとき｝と｛通さないとき｝のつなぎ方を比較しながら調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 電気を通す｛つなぎ方｝と通さない｛つなぎ方｝があること。\n\n　　(イ） 電気を通す物と通さない物があること。\n\n　イ 乾電池と豆電球などのつなぎ方と乾電池につないだ物の様子について追究する中で，差異点や共通点を基に，電気の｛回路｝についての問題を見いだし，｛表現｝すること。\n\nＢ 生命・地球\n\n　(1) 身の回りの生物\n\n　身の回りの生物について，探したり｛育てたり｝する中で，それらの様子や周辺の｛環境｝，｛成長｝の過程や体の｛つくり｝に着目して，それらを比較しながら調べる活動を通して，次の事項を身に付けることができるよう指導する\n\n　ア  次のことを理解するとともに，｛観察｝，実験などに関する技能を身に付けること。\n\n　　（ア） 生物は，｛色｝，形，｛大きさ｝など，姿に違いがあること。また,｛周辺の環境｝と関わって生きていること。\n\n　　(イ） 昆虫の育ち方には｛一定の順序｝があること。また，成虫の体は｛頭｝，｛胸｝及び｛腹｝からできていること。\n\n　　（ウ） 植物の育ち方には一定の順序があること。また，その体は｛根｝，｛茎｝及び｛葉｝からできていること。\n\n　イ 身の回りの生物の様子について｛追究｝する中で，差異点や共通点を基に，身の回りの生物と環境との関わり，昆虫や植物の成長の｛きまり｝や体の｛つくり｝についての｛問題｝を見いだし，表現すること。\n\n　(2) 太陽と地面の様子\n\n　太陽と地面の様子との｛関係｝について，日なたと日陰の様子に着目して，それらを比較しながら調べる活動を通して，次の事項を身に付けることができるよう指導する\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　（ア） 日陰は太陽の光を｛遮る｝とでき，日陰の位置は｛太陽の位置｝の変化によって変わること\n\n　　（イ） 地面は太陽によって暖められ，日なたと日陰では｛地面｝の暖かさや湿り気に違いがあること\n\n　イ 日なたと日陰の様子について追究する中で，差異点や共通点を基に，｛太陽｝と｛地面｝の様子との関係についての問題を見いだし，表現すること\n\n&lt;em&gt;３ 内容の取扱い&lt;/em&gt;\n\n　(1) 内容の「Ａ物質・エネルギー」の指導に当たっては，｛3｝種類以上のものづくりを行うものとする。\n\n　(2) 内容の「Ａ物質・エネルギー」の(4)のアの（ア）については，磁石が物を引き付ける力は，磁石と｛物の距離｝によって変わることにも触れること。\n\n　(3) 内容の「Ｂ生命・地球」の(1)については，次のとおり取り扱うものとする。\n\n　ア アの（イ）及び（ウ）については，飼育，｛栽培｝を通して行うこと。\n\n　イ アの（ウ）の「植物の育ち方」については，｛夏生一年生｝の｛双葉葉｝植物を扱うこと\n\n　(4) 内容の「Ｂ生命・地球」の(2)のアの（ア）の「太陽の位置の変化」については，｛東｝から南，｛西｝へと変化することを取り扱うものとする。また，太陽の位置を調べるときの方位は東，西，南，北を扱うものとする\n\n&lt;h4&gt;第4学年&lt;/h4&gt;\n\n&lt;em&gt;１ 目 標&lt;/em&gt;\n\n　(1) 物質・エネルギー\n\n　① 空気，水及び｛金属｝の性質，｛電流｝の働きについての理解を図り，観察，実験などに関する基本的な技能を身に付けるようにする。\n\n　② 空気，水及び金属の性質，電流の働きについて追究する中で，主に｛既習の内容｝や｛生活経験｝を基に，根拠のある｛予想｝や｛仮設｝を発想する力を養う。\n\n　③ 空気，水及び金属の性質，電流の働きについて追究する中で，｛主体的｝に問題解決しようとする態度を養う。\n\n　(2) 生命・地球\n\n　① 人の体のつくりと｛運動｝，動物の活動や植物の成長と｛環境｝との関わり，｛雨水｝の行方と地面の様子，気象現象，｛月｝や星についての理解を図り，観察，実験などに関する基本的な技能を身に付けるようにする\n\n　② 人の体のつくりと運動，動物の活動や植物の成長と環境との関わり，雨水の行方と地面の様子，気象現象，月や星について追究する中で，主に既習の内容や生活経験を基に，根拠のある予想や仮説を｛発想｝する力を養う。\n\n　③ 人の体のつくりと運動，動物の活動や植物の成長と環境との関わり，雨水の行方と地面の様子，気象現象，月や星について追究する中で，生物を｛愛護｝する態度や主体的に｛問題解決｝しようとする態度を養う。\n\n&lt;em&gt;２ 内 容&lt;/em&gt;\n\nＡ 物質・エネルギー\n\n　(1) 空気と水の性質\n\n　空気と水の性質について，｛体積｝や｛圧し返す｝力の変化に着目して，それらと圧す力とを関係付けて調べる活動を通して，次の事項を身に付けることができるよう指導する\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 閉じ込めた空気を圧おすと，体積は｛小さく｝なるが，圧おし返す力は｛大きく｝なること。\n\n　　(イ） ｛閉じ込めた空気｝は圧し縮められるが，｛水｝は圧し縮められないこと\n\n　イ 空気と水の性質について追究する中で，既習の内容や生活経験を基に，空気と水の体積や圧し返す力の変化と圧す力との関係について，根拠のある予想や仮説を発想し，表現すること\n\n　(2) 金属，水，空気と温度\n\n　金属，水及び空気の性質について，体積や｛状態｝の変化，｛熱｝の伝わり方に着目して，それらと｛温度｝の変化とを関係付けて調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 金属，水及び空気は，温めたり冷やしたりすると，それらの｛体積｝が変わるが，その程度には｛違い｝があること。\n\n　　（イ） 金属は｛熱せられた｝部分から順に温まるが，水や空気は熱せられた部分が｛移動｝して全体が温まること。\n\n　　（ウ） 水は，温度によって｛水蒸気｝や氷に変わること。また，水が氷になると｛体積｝が増えること\n\n　イ 金属，水及び空気の性質について追究する中で，既習の内容や生活経験を基に，金属，水及び空気の温度を変化させたときの体積や｛状態｝の変化，熱の伝わり方について，｛根拠｝のある予想や仮説を発想し，｛表現｝すること。\n\n　(3) 電流の働き\n\n　電流の働きについて，電流の大きさや｛向き｝と乾電池につないだ物の様子に着目して，それらを｛関係付けて｝調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 乾電池の数や｛関係付けて｝を変えると，｛電流｝の大きさや向きが変わり，豆電球の明るさやモーターの回り方が変わること。\n\n　イ 電流の働きについて追究する中で，既習の内容や生活経験を基に，電流の大きさや向きと乾電池につないだ物の様子との関係について，根拠のある予想や仮説を発想し，表現すること。\n\nＢ 生命・地球\n\n　(1) 人の体のつくりと運動\n\n　人や他の動物について，｛骨｝や｛筋肉｝のつくりと働きに着目して，それらを関係付けて調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア  次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　（ア） 人の体には骨と筋肉があること。\n\n　　(イ） 人が体を動かすことができるのは，骨，筋肉の働きによること。\n\n　イ 人や他の動物について追究する中で，既習の内容や｛生活経験｝を基に，人や他の動物の骨や筋肉のつくりと｛働き｝について，根拠のある予想や仮説を発想し，表現すること。\n\n　(2) 季節と生物\n\n　身近な動物や植物について，探したり育てたりする中で，動物の活動や植物の成長と｛季節｝の変化に着目して，それらを関係付けて調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　（ア） 動物の活動は，｛暖かい｝季節，｛寒い｝季節などによって違いがあること。\n\n　　（イ） ｛植物｝の成長は，暖かい季節，寒い季節などによって違いがあること。\n\n　イ 身近な動物や植物について追究する中で，既習の内容や生活経験を基に，季節ごとの動物の｛活動｝や植物の成長の変化について，根拠のある予想や｛仮説｝を発想し，表現すること。\n\n　(3) 雨水の行方と地面の様子\n\n水の行方と地面の様子について，流れ方やしみ込み方に着目して，それらと地面の傾きや土の粒の大きさとを関係付けて調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 水は，｛高い場所｝から｛低い場所｝へと流れて集まること\n\n 　　(イ） 水のしみ込み方は，土の｛粒の大きさ｝によって違いがあること。\n\n　イ 雨水の行方と地面の様子について追究する中で，既習の内容や生活経験を基に，雨水の｛流れ方｝や｛染み込み方｝と地面の｛傾き｝や土の粒の大きさとの関係について，根拠のある予想や仮説を発想し，表現すること。\n\n　(4) 天気の様子\n\n　天気や自然界の水の様子について，気温や水の行方に着目して，それらと天気の様子や水の｛状態変化｝とを関係付けて調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 天気によって１日の｛気温｝の変化の仕方に違いがあること\n\n　　(イ） 水は，｛水面｝や地面などから｛蒸発｝し，水蒸気になって｛空気中｝に含まれていくこと。また，空気中の水蒸気は，｛結露｝して再び水になって現れることがあること。\n\n　イ 天気や自然界の水の様子について追究する中で，既習の内容や生活経験を基に，天気の様子や水の状態変化と気温や｛水の行方｝との関係について，根拠のある予想や仮説を発想し，｛表現｝すること。\n\n　(5) 月と星\n\n　月や星の特徴について，｛位置｝の変化や時間の｛経過｝に着目して，それらを関係付けて調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，｛観察｝，実験などに関する技能を身に付けること。\n\n　　(ア） 月は｛日｝によって形が変わって見え，１日のうちでも｛時刻｝によって｛位置｝が変わること。\n\n　　(イ） 空には，明るさや｛色｝の違う星があること。\n\n　　(ウ） 星の集まりは，１日のうちでも時刻によって，｛並び方｝は変わらないが，｛位置｝が変わること。\n\n　イ 月や星の特徴について追究する中で，既習の内容や生活経験を基に，｛月｝や｛星｝の位置の変化と時間の経過との関係について，根拠のある予想や仮説を発想し，表現すること。\n\n&lt;em&gt;３ 内容の取扱い&lt;/em&gt;\n\n　(1) 内容の「Ａ物質・エネルギー」の(3)のアの（ア）については，｛直列つなぎ｝と｛並列つなぎ｝を扱うものとする。\n\n　(2) 内容の「Ａ物質・エネルギー」の指導に当たっては，｛2｝種類以上のものづくりを行うものとする。\n\n　(3) 内容の「Ｂ生命・地球」の(1)のアの（イ）については，｛関節｝の働きを扱うものとする。\n\n　(4) 内容の「Ｂ生命・地球」の(2)については，１年を通じて動物の活動や植物の成長をそれぞれ２種類以上観察するものとする。\n\n&lt;h4&gt;第5学年&lt;/h4&gt;\n\n&lt;em&gt;１ 目 標&lt;/em&gt;\n\n　(1) 物質・エネルギー\n\n　① 物の｛溶け方｝，｛振り子｝の運動，電流がつくる｛磁力｝についての理解を図り，観察，実験などに関する基本的な技能を身に付けるようにする。\n\n　② 物の溶け方，振り子の運動，電流がつくる磁力について追究する中で，主に予想や仮説を基に，｛解決｝の方法を発想する力を養う。\n\n　③ 物の溶け方，振り子の運動，電流がつくる磁力について追究する中で，｛主体的｝に問題解決しようとする態度を養う。\n\n　(2) 生命・地球\n\n　① 生命の｛連続性｝，流れる水の働き，｛気象現象｝の規則性についての理解を図り，観察，実験などに関する基本的な技能を身に付けるようにする。\n\n　② 生命の連続性，流れる水の働き，気象現象の規則性について追究する中で，主に｛予想｝や仮説を基に，解決の方法を｛発想｝する力を養う\n\n　③ 生命の連続性，流れる水の働き，気象現象の規則性について追究する中で，｛生命｝を尊重する態度や主体的に問題解決しようとする態度を養う。\n\n&lt;em&gt;２ 内 容&lt;/em&gt;\n\nＡ 物質・エネルギー\n\n　(1) 物の溶け方\n\n　物の溶け方について，溶ける｛量｝や｛様子｝に着目して，水の温度や量などの｛条件｝を制御しながら調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 物が水に溶けても，水と物とを合わせた｛重さ｝は変わらないこと\n\n　　(イ） 物が水に溶ける量には，｛限度｝があること。\n\n　　(ウ） 物が水に溶ける量は水の温度や量，｛溶ける物｝によって違うこと。また，この性質を利用して，溶けている物を｛取り出す｝ことができること。\n\n　イ 物の溶け方について追究する中で，物の溶け方の｛規則性｝についての予想や仮説を基に，解決の方法を｛発想｝し，表現すること。\n\n　(2) 振り子の運動\n\n　振り子の運動の規則性について，振り子が｛1往復｝する時間に着目して，｛おもり｝の重さや振り子の長さなどの条件を｛制御｝しながら調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　(ア） 振り子が１往復する時間は，おもりの重さなどによっては変わらないが，｛振り子の長さ｝によって変わること。\n\n　イ 振り子の運動の規則性について追究する中で，振り子が１往復する時間に関係する｛条件｝についての予想や仮説を基に，解決の方法を発想し，表現すること。\n\n　(3) 電流がつくる磁力\n\n　電流がつくる磁力について，電流の大きさや向き，｛コイルの巻数｝などに着目して，それらの条件を制御しながら調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること\n\n　　(ア） 電流の流れているコイルは，｛鉄心｝を磁化する働きがあり，電流の向きが変わると，電磁石の｛極｝も変わること。\n\n　　(イ） 電磁石の強さは，電流の｛大きさ｝や｛導線の巻数｝によって変わること。\n\n　イ 電流がつくる磁力について追究する中で，電流がつくる磁力の強さに関係する条件についての予想や仮説を基に，｛解決の方法｝を発想し，表現すること。\n\nＢ 生命・地球\n\n　(1) 植物の発芽，成長，結実\n\n　植物の育ち方について，｛発芽｝，成長及び｛結実｝の様子に着目して，それらに関わる条件を制御しながら調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア  次のことを理解するとともに，観察，｛実験｝などに関する｛技能｝を身に付けること。\n\n　　(ア） 植物は，種子の中の｛養分｝を基にして発芽すること。\n\n　　(イ） 植物の発芽には，水，空気及び｛温度｝が関係していること。\n\n　　(ウ） 植物の成長には，日光や｛肥料｝などが関係していること。\n\n　　(エ） 花にはおしべやめしべなどがあり，花粉が｛めしべ｝の先に付くとめしべの｛もと｝が実になり，実の中に｛種子｝ができること。\n\n　イ 植物の育ち方について追究する中で，植物の発芽，成長及び結実とそれらに関わる条件についての予想や仮説を基に，解決の方法を発想し，表現すること。\n\n　(2) 動物の誕生\n\n　動物の｛めしべ｝や成長について，｛魚｝を育てたり人の発生についての｛資料｝を活用したりする中で，卵や｛胎児｝の様子に着目して，時間の経過と関係付けて調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 魚には｛雌雄｝があり，生まれた卵は日がたつにつれて中の様子が変化してかえること。\n\n　　(イ） 人は，｛母体内｝で成長して生まれること。\n\n　イ 動物の発生や成長について追究する中で，動物の発生や成長の様子と｛経過｝についての予想や仮説を基に，解決の方法を発想し，｛表現｝すること。\n\n　(3) 流れる水の働きと土地の変化\n\n　流れる水の働きと土地の変化について，水の｛速さ｝や｛量｝に着目して，それらの条件を制御しながら調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを｛理解｝するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 流れる水には，土地を｛侵食｝したり，石や土などを｛運搬｝したり｛堆積｝させたりする働きがあること。\n\n　　(イ） 川の｛上流｝と｛下流｝によって，川原の石の大きさや形に違いがあること。\n\n　　(ウ） ｛雨の降り方｝によって，流れる水の｛速さ｝や量は変わり，増水により｛土地｝の様子が大きく変化する場合があること。\n\n　イ 流れる水の働きについて追究する中で，流れる水の働きと｛土地の変化｝との関係についての予想や仮説を基に，解決の方法を発想し，表現すること。\n\n　(4) 天気の変化\n\n　天気の変化の仕方について,｛雲の様子｝を観測したり,｛映像｝などの気象情報を活用したりする中で,雲の｛量｝や動きに着目して,それらと天気の変化とを｛関係付けて｝調べる活動を通して,次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 天気の変化は，雲の量や｛動き｝と関係があること。\n\n　　(イ） 天気の変化は，映像などの｛気象情報｝を用いて予想できること。\n\n　イ 天気の変化の仕方について追究する中で，天気の変化の仕方と雲の量や動きとの関係についての｛予想｝や仮説を基に，解決の方法を発想し，表現すること。\n\n&lt;em&gt;３ 内容の取扱い&lt;/em&gt;\n\n　(1) 内容の「Ａ物質・エネルギー」の指導に当たっては，｛2｝種類以上のものづくりを行うものとする\n\n　(2) 内容の「Ａ物質・エネルギー」の(1)については，水溶液の中では，溶けている物が｛均一に広がる｝ことにも触れること。\n\n　(3) 内容の「Ｂ生命・地球」の(1)については，次のとおり取り扱うものとする。\n\n　ア アの（ア）の「種子の中の養分」については，｛でんぷん｝を扱うこと。\n\n　イ アの（エ）については，おしべ，めしべ，｛がく｝及び｛花びら｝を扱うこと。また，受粉については，｛風｝や昆虫などが関係していることにも触れること。\n\n　(4) 内容の「Ｂ生命・地球」の(2)のアの（イ）については，｛人の受精｝に至る過程は取り扱わないものとする。\n\n　(5) 内容の「Ｂ生命・地球」の(3)のアの（ウ）については，｛自然災害｝についても触れること\n\n　(6) 内容の「Ｂ生命・地球」の(4)のアの（イ）については，台風の｛進路｝による天気の変化や台風と｛降雨｝との関係及びそれに伴う自然災害についても触れること。\n\n&lt;h4&gt;第6学年&lt;/h4&gt;\n\n&lt;em&gt;１ 目 標&lt;/em&gt;\n\n　(1) 物質・エネルギー\n\n　① ｛燃焼｝の仕組み，｛水溶液｝の性質，｛てこ｝の規則性及び電気の性質や働きについての理解を図り，観察，実験などに関する基本的な技能を身に付けるようにする。\n\n　② 燃焼の仕組み，水溶液の性質，てこの規則性及び電気の性質や働きについて追究する中で，主にそれらの｛仕組み｝や性質，｛規則性｝及び働きについて，より｛より妥当な考え｝をつくりだす力を養う\n\n　③ 燃焼の仕組み，水溶液の性質，てこの規則性及び電気の性質や働きについて追究する中で，｛主体的｝に問題解決しようとする態度を養う\n\n　(2) 生命・地球\n\n　① 生物の体のつくりと働き，生物と環境との｛関わり｝，土地のつくりと｛変化｝，｛月｝の形の見え方と太陽との｛位置関係｝についての理解を図り，観察，実験などに関する基本的な技能を身に付けるようにする。\n\n② 生物の体のつくりと働き，生物と環境との関わり，土地のつくりと変化，月の形の見え方と太陽との位置関係について｛追究｝する中で，主にそれらの｛働き｝や関わり，変化及び｛関係｝について，より妥当な考えを｛つくりだす｝力を養う。\n\n　③ 生物の体のつくりと働き，生物と環境との関わり，土地のつくりと変化，月の形の見え方と太陽との位置関係について追究する中で，｛生命｝を尊重する態度や主体的に｛問題解決｝しようとする態度を養う。\n\n&lt;em&gt;２ 内 容&lt;/em&gt;\n\nＡ 物質・エネルギー\n\n　(1) 燃焼の仕組み\n\n　燃焼の仕組みについて，｛空気｝の変化に着目して，物の燃え方を｛多面的｝に調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること\n\n　　(ア） ｛植物体｝が燃えるときには，空気中の酸素が使われて｛二酸化炭素｝ができること。\n\n　イ 燃焼の仕組みについて追究する中で，物が燃えたときの｛空気｝の変化について，より｛妥当｝な考えをつくりだし，表現すること。\n\n　(2) 水溶液の性質\n\n　水溶液について，｛溶けている物｝に着目して，それらによる水溶液の性質や｛働き｝の違いを多面的に調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する｛技能｝を身に付けること。\n\n　　(ア） 水溶液には，｛酸性｝，｛アルカリ性｝及び｛中性｝のものがあること。\n\n　　(イ） 水溶液には，｛気体｝が溶けているものがあること。\n\n　　(ウ） 水溶液には，｛金属｝を変化させるものがあること。\n\n　イ 水溶液の性質や働きについて追究する中で，溶けているものによる性質や働きの違いについて，より妥当な考えをつくりだし，｛表現｝すること。\n\n　(3) てこの規則性\n\n　てこの規則性について，力を｛加える位置｝や力の大きさに着目して，てこの働きを多面的に調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 力を加える位置や｛力の大きさ｝を変えると，てこを｛傾ける｝働きが変わり，てこがつり合うときにはそれらの間に｛規則性｝があること。\n\n　　(イ） 身の回りには，てこの規則性を利用した｛道具｝があること。\n\n　イ てこの規則性について追究する中で，力を加える位置や力の大きさとてこの働きとの関係について，より妥当な考えをつくりだし，表現すること\n\n　(4) 電気の利用\n\n　発電や｛蓄電｝，電気の｛変換｝について，電気の量や働きに着目して，それらを｛多面的｝に調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを｛理解｝するとともに，観察，実験などに関する技能を身に付けること。\n\n　　（ア） 電気は，｛つくりだし｝たり蓄えたりすることができること。\n\n　　（イ） 電気は，｛光｝，｛音｝，｛熱｝，｛運動｝などに変換することができること。\n\n　　（ウ） 身の回りには，電気の｛性質｝や働きを利用した道具があること\n\n　イ 電気の性質や働きについて追究する中で，電気の量と働きとの関係，発電や蓄電，電気の変換について，より妥当な考えをつくりだし，｛表現｝すること。\n\nＢ 生命・地球\n\n　(1) 人の体のつくりと働き\n\n　人や他の動物について，体のつくりと｛呼吸｝，｛消化｝，｛排泄｝及び｛循環｝の働きに着目して，生命を維持する働きを多面的に調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア  次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 体内に｛酸素｝が取り入れられ，体外に二酸化炭素などが出されていること。\n\n　　(イ） 食べ物は，｛口｝，｛胃｝，｛腸｝などを通る間に消化，吸収され，吸収されなかった物は｛排泄｝されること。\n\n　　(ウ） 血液は，｛心臓｝の働きで体内を巡り，｛養分｝，酸素及び｛二酸化炭素｝などを運んでいること。\n\n　　(エ） 体内には，生命活動を維持するための様々な｛臓器｝があること。\n\n　イ 人や他の動物の体のつくりと働きについて追究する中で，体のつくりと呼吸，消化，排出及び循環の働きについて，｛より妥当｝な考えをつくりだし，表現すること。\n\n　(2) 植物の養分と水の通り道\n\n　植物について，その体のつくり，体内の｛水｝などの行方及び｛葉｝で養分をつくる働きに着目して，生命を維持する働きを多面的に調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 植物の葉に日光が当たると｛でんぷん｝ができること。\n\n　　(イ） 根，茎及び葉には，｛水の通り道｝があり，根から吸い上げられた水は主に葉から｛蒸散｝により排出されること。\n\n　イ 植物の体のつくりと働きについて追究する中で，｛体｝のつくり，｛体内｝の水などの行方及び葉で養分をつくる働きについて，より妥当な考えをつくりだし，表現すること。\n\n　(3) 生物と環境\n\n　生物と環境について，動物や植物の｛生活｝を観察したり｛資料｝を活用したりする中で，生物と環境との関わりに着目して，それらを多面的に調べる｛活動｝を通して，次の事項を身に付けることができるよう指導する。\n\n　ア  次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 生物は，水及び空気を通して｛周囲の環境｝と関わって生きていること。\n\n　　(イ） 生物の間には，｛食う食われる｝という関係があること。\n\n　　(ウ） 人は，｛環境｝と関わり，｛工夫｝して生活していること。\n\n　イ 生物と環境について追究する中で，生物と環境との関わりについて，より妥当な考えをつくりだし，表現すること。\n\n　(4) 土地のつくりと変化\n\n　土地のつくりと｛変化｝について，土地やその中に含まれる物に着目して，土地のつくりや｛でき方｝を多面的に調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　（ア） 土地は，｛礫｝，｛砂｝，｛泥｝，｛火山灰｝などからできており，｛層｝をつくって広がっているものがあること。また，層には｛化石｝が含まれているものがあること。\n\n　　(イ） 地層は，｛流れる水｝の働きや｛火山の噴火｝によってできること。\n\n　　(ウ） 土地は，火山の噴火や｛地震｝によって変化すること。\n\n　イ 土地のつくりと変化について追究する中で，土地のつくりやでき方について，より妥当な｛考え｝をつくりだし，表現すること。\n\n　(5) 月と太陽\n\n　月の形の見え方について，月と｛太陽の位置｝に着目して，それらの位置関係を多面的に調べる活動を通して，次の事項を身に付けることができるよう指導する。\n\n　ア 次のことを理解するとともに，観察，実験などに関する技能を身に付けること。\n\n　　(ア） 月の｛輝いている｝側に太陽があること。また，月の形の見え方は，太陽と月との｛位置関係｝によって変わること。\n\n　イ 月の形の見え方について追究する中で，月の位置や｛形｝と太陽の位置との関係について，より妥当な考えをつくりだし，表現すること。\n\n&lt;em&gt;３ 内容の取扱い&lt;/em&gt;\n\n(1) 内容の「Ａ物質・エネルギー」の指導に当たっては，２種類以上のものづくりを行うものとする。\n\n　(2) 内容の「Ａ物質・エネルギー」の(4)のアの（ア）については，電気をつくりだす道具として，｛手回し発電機｝，｛光電池｝などを扱うものとする。\n\n　(3) 内容の「Ｂ生命・地球」の(1)については，次のとおり取り扱うものとする。\n\n　ア アの（ウ）については，心臓の｛拍動｝と｛脈拍｝とが関係することにも触れること。\n\n　イ アの（エ）については，主な臓器として，｛肺｝，｛胃｝，小腸，｛大腸｝，｛肝臓｝，｛腎臓｝，｛心臓｝を扱うこと\n\n　(4) 内容の「Ｂ生命・地球」の(3)については，次のとおり取り扱うものとする。\n\n　ア アの（ア）については，水が｛循環｝していることにも触れること。\n\n　イ アの（イ）については，水中の｛小さな生物｝を観察し，それらが｛魚｝などの食べ物になっていることに触れること。\n\n　(5) 内容の「Ｂ生命・地球」の(4)については，次のとおり取り扱うものとする。\n\n　ア アの（イ）については，流れる水の働きでできた岩石として｛礫岩｝，｛砂岩｝，｛泥岩｝を扱うこと。\n\n　イ アの（ウ）については，｛自然災害｝についても触れること。\n\n　(6) 内容の「Ｂ生命・地球」の(5)のアの（ア）については，｛地球｝から見た太陽と月との位置関係で扱うものとする。\n\n&lt;h2&gt;第３ 指導計画の作成と内容の取扱い&lt;/h2&gt;\n\n&lt;h5&gt;１ 指導計画の作成に当たっては，次の事項に配慮するものとする&lt;/h5&gt;\n\n　(1) 単元など内容や時間のまとまりを見通して，その中で育む資質・能力の育成に向けて，児童の｛主体｝的・｛対話｝的で深い学びの実現を図るようにすること。その際，理科の学習過程の特質を踏まえ，理科の見方・考え方を働かせ，見通しをもって観察，実験を行うことなどの，問題を｛科学的｝に解決しようとする学習活動の充実を図ること。\n\n　(2) 各学年で育成を目指す思考力，｛判断力｝，表現力等については，該当学年において育成することを目指す力のうち，主なものを示したものであり，実際の指導に当たっては，他の学年で掲げている力の育成についても十分に配慮すること。\n\n　(3) 障害のある児童などについては，｛学習活動｝を行う場合に生じる困難さに応じた｛指導内容｝や指導方法の工夫を計画的，｛組織的｝に行うこと。\n\n　(4) 第１章総則の第１の２の(2)に示す｛道徳教育｝の目標に基づき，道徳科などとの関連を考慮しながら，第３章特別の教科道徳の第２に示す内容について，理科の特質に応じて適切な指導をすること\n\n&lt;h5&gt;２ 第２の内容の取扱いについては，次の事項に配慮するものとする。&lt;/h5&gt;\n\n　(1) ｛問題｝を見いだし，予想や仮説，観察，実験などの方法について考えたり｛説明｝したりする学習活動，観察，実験の結果を｛整理｝し考察する学習活動，｛科学的｝な言葉や概念を使用して考えたり説明したりする｛学習活動｝などを重視することによって，｛言語｝活動が充実するようにすること\n\n　(2) 観察，実験などの指導に当たっては，指導内容に応じて｛コンピュータ｝や情報通信ネットワークなどを適切に活用できるようにすること。また，第１章総則の第３の１の(3)のイに掲げる｛プログラミング｝を体験しながら｛論理的思考力｝を身に付けるための学習活動を行う場合には，児童の｛負担｝に配慮しつつ，例えば第２の各学年の内容の〔第６学年〕の「Ａ物質・エネルギー」の(4)における電気の性質や働きを利用した道具があることを捉える学習など，与えた｛条件｝に応じて動作していることを考察し，更に条件を変えることにより，｛動作｝が変化することについて考える場面で取り扱うものとする。\n\n　(3) 生物，天気，川，土地などの指導に当たっては，｛野外｝に出掛け地域の自然に親しむ活動や｛体験的｝な活動を多く取り入れるとともに，生命を尊重し，自然環境の｛保全｝に寄与する態度を養うようにすること。\n\n　(4) 天気，川，土地などの指導に当たっては，｛災害｝に関する基礎的な理解が図られるようにすること\n\n　(5) 個々の児童が主体的に問題解決の活動を進めるとともに，｛日常生活｝や他教科等との関連を図った学習活動，目的を設定し，｛計測｝して制御するという考え方に基づいた学習活動が充実するようにすること。\n\n　(6) 博物館や｛科学学習センター｝などと連携，協力を図りながら，それらを｛積極的｝に活用すること。\n\n&lt;h5&gt;３ 観察，実験などの指導に当たっては，事故防止に十分留意すること。また，環境整備に十分配慮するとともに，使用薬品についても適切な措置をとるよう配慮すること。&lt;/h5&gt;\n\n";
 // === end of qdata
 
 // ヒント hint
